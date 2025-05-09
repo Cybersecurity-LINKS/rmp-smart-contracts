@@ -1,0 +1,16 @@
+{
+  "Platinum-789273310": {
+    "address": "0x0DE62661526CC38AF31A3799924F7b0F93477A48",
+    "amount": "81.27",
+    "type": "Platinum",
+    "symbol": "Platinum789273310",
+    "nftTxnHash": "0x73a21f0f000a7bbcbd1356019f1a5cccacda0fc51d496c1444d81c7dbbfe329d"
+  },
+  "Platinum-789273311": {
+    "address": "0xD9BE3a05552D4B1D742697e7bfEec59B0b8be2e6",
+    "amount": "224.92",
+    "type": "Platinum",
+    "symbol": "Platinum789273311",
+    "nftTxnHash": "0x68823f14a19de8c8dd57eda464a6033d326a6460e221854624ce3f8e23c49be7"
+  }
+}

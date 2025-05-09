@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend_miner/Dockerfile
+    ports:
+      - "49000:80"
+    environment:
+      - BACKEND_URL=http://miner-rs:3213
+    networks:
+      - miner-net
+
+networks:
+  miner-net:
+    external: true
+    name: shared-net
