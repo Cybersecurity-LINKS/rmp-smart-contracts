@@ -1,0 +1,17 @@
+.idea
+node_modules
+.env
+coverage
+coverage.json
+typechain
+typechain-types
+venv
+
+# Hardhat files
+cache
+artifacts
+#addresses
+nft-metadata.json
+DTAddresses.json
+addresses/contractAddresses.json
+package-lock.json
