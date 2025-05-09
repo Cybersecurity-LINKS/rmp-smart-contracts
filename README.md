@@ -1,4 +1,8 @@
-# Smart Contracts for Mastermine
+# Raw Material Passport Smart Contracts 
+
+This repository contains the implementation of the Smart Contracts for the **Raw Material Passport (RMP)**, 
+which are developed by the [Cybersecurity Research Group at LINKS Foundation](https://cybersecurity-links.github.io/) 
+as part of the [MASTERMINE](https://www.mastermine-project.eu/) project.
 
 ## Prepare environment
 
