@@ -2,7 +2,6 @@ const { ethers } = require("hardhat");
 const fs = require("fs");
 
 async function main() {
-
     let obtainedAddresses = {}
     const name = "addresses"
     obtainedAddresses[name] = {};
@@ -11,41 +10,54 @@ async function main() {
 
     const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with the account:", deployer.address);
-    console.log("Account balance:", (await deployer.getBalance()).toString());
-  
+    const balance = await ethers.provider.getBalance(deployer.address);
+    console.log("Account balance:", balance.toString());
+
+    // Deploy Deployer contract
     const Deployer = await ethers.getContractFactory("Deployer");
-    let token = await Deployer.deploy();
-    addresses.Deployer = token.address;
-    console.log("Deployer address:", token.address);
-    
+    const deployer_contract = await Deployer.deploy();
+    await deployer_contract.waitForDeployment(); // Attendi il completamento del deployment
+    const deployer_address = await deployer_contract.getAddress(); // Ottieni l'indirizzo corretto
+    addresses.Deployer = deployer_address;
+    console.log("Deployer address:", deployer_address);
+
+    // Deploy ERC721Base contract
     const ERC721Base = await ethers.getContractFactory("ERC721Base");
-    const baseAddress = await ERC721Base.deploy();
-    addresses.ERC721Base = baseAddress.address;
-    console.log("ERC721Base address:", baseAddress.address);
+    const baseContract = await ERC721Base.deploy();
+    await baseContract.waitForDeployment();
+    const baseAddress = await baseContract.getAddress();
+    addresses.ERC721Base = baseAddress;
+    console.log("ERC721Base address:", baseAddress);
 
+    // Deploy ERC20Base contract
     const ERC20Base = await ethers.getContractFactory("ERC20Base");
-    const base20Address = await ERC20Base.deploy();
-    addresses.ERC20Base=base20Address.address;
-    console.log("ERC20Base address:", base20Address.address);
+    const base20Contract = await ERC20Base.deploy();
+    await base20Contract.waitForDeployment();
+    const base20Address = await base20Contract.getAddress();
+    addresses.ERC20Base = base20Address;
+    console.log("ERC20Base address:", base20Address);
 
+    // Deploy ERC721Factory contract
     const ERC721Factory = await ethers.getContractFactory("ERC721Factory");
-    token = await ERC721Factory.deploy(baseAddress.address, base20Address.address);
-    addresses.ERC721Factory = token.address;
-    console.log("ERC721Factory address:", token.address);
+    const factory = await ERC721Factory.deploy(baseAddress, base20Address);
+    await factory.waitForDeployment();
+    const factoryAddress = await factory.getAddress();
+    addresses.ERC721Factory = factoryAddress;
+    console.log("ERC721Factory address:", factoryAddress);
 
     obtainedAddresses[name] = addresses;
 
     const json = JSON.stringify(obtainedAddresses, null, 2);
     await fs.promises.writeFile(__dirname.replace('scripts','addresses/contractAddresses.json'), json)
-    .catch((err) => {
-      console.log("Error in writing addresses file!", err);
-    });
+        .catch((err) => {
+            console.log("Error in writing addresses file!", err);
+        });
     console.log("Addresses file correctly generated. Have a look in the ../addresses folder");
-  }
-  
-  main()
+}
+
+main()
     .then(() => process.exit(0))
     .catch((error) => {
-      console.error(error);
-      process.exit(1);
+        console.error(error);
+        process.exit(1);
     });

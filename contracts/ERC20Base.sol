@@ -3,8 +3,7 @@ pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "../interfaces/IERC721Base.sol";
 import "../interfaces/IERC20Base.sol";
 
@@ -13,7 +12,6 @@ Initializable,
 ERC20Upgradeable,
 IERC20Base {
 
-    using SafeMathUpgradeable for uint256;
 
     address private _factory;
     address private _erc721address;
@@ -98,7 +96,7 @@ IERC20Base {
 
     function mint(address to, uint256 amount) public {
         require(msg.sender == _owner || isAllowedMinter(msg.sender), "NOT ALLOWED TO MINT DTs");
-        require(totalSupply().add(amount) <= _maxSupply, "Cannot exceed the cap");
+        require(totalSupply() + amount <= _maxSupply, "Cannot exceed the cap");
         _mint(to, amount);
     }
 
