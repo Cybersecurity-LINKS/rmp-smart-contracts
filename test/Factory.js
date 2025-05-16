@@ -2,9 +2,9 @@ const {expect} = require("chai");
 const {loadFixture} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const {anyValue} = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const {ethers} = require("hardhat");
-const {deployAllFixture} = require("./fixtures");
+const {deployAllFixture, deployFactoryFixture} = require("./fixtures");
 
-describe("Depler Test Suite", function () {
+describe("Factory Test Suite: check fixture deploy", function () {
 
     it("Should deploy all contracts with valid addresses", async function () {
         const {
@@ -55,6 +55,106 @@ describe("Depler Test Suite", function () {
         const {erc721Factory, owner} = await loadFixture(deployAllFixture);
 
         expect(await erc721Factory.owner()).to.equal(owner.address);
+    });
+});
+
+describe("ERC721Factory", function () {
+
+    describe("Contract Deployment", function () {
+        it("Should deploy new ERC721 contract correctly", async function () {
+            const {erc721Factory, owner} = await loadFixture(deployFactoryFixture);
+
+            const publishData = {
+                name: "Test NFT",
+                symbol: "TNFT",
+                tokenURI: "ipfs://test",
+                dt_name: "Test Token",
+                dt_symbol: "TT",
+                maxSupply_: ethers.parseEther("1000")
+            };
+
+            // Wait the event NFTCreated
+            await expect(erc721Factory.deployERC721Contract(publishData))
+                .to.emit(erc721Factory, "NFTCreated")
+                .withArgs(
+                    // use the matchers for the argoments
+                    anyValue,  // newTokenAddress
+                    anyValue,  // templateAddress
+                    publishData.name,
+                    anyValue,  // admin
+                    publishData.symbol,
+                    publishData.tokenURI
+                );
+        });
+
+
+        it("Should deploy new ERC20 contract correctly", async function () {
+            const {erc721Factory, owner} = await loadFixture(deployFactoryFixture);
+
+            const publishData = {
+                name: "Test NFT",
+                symbol: "TNFT",
+                tokenURI: "ipfs://test",
+                dt_name: "Test Token",
+                dt_symbol: "TT",
+                maxSupply_: ethers.parseEther("1000")
+            };
+
+            // Usa publishAllinOne che crea sia NFT che ERC20 in una singola transazione
+            const tx = await erc721Factory.publishAllinOne(publishData);
+            const receipt = await tx.wait();
+
+            // Trova prima l'evento NFTCreated per ottenere l'indirizzo dell'NFT
+            const nftEvent = receipt.logs.filter(
+                log => log.fragment && log.fragment.name === 'NFTCreated'
+            )[0];
+
+            expect(nftEvent).to.not.be.undefined;
+            const nftAddress = nftEvent.args[0];
+
+            // Trova l'evento ERC20ContractDeployed
+            const erc20Event = receipt.logs.filter(
+                log => log.fragment && log.fragment.name === 'ERC20ContractDeployed'
+            )[0];
+
+            expect(erc20Event).to.not.be.undefined;
+            expect(erc20Event.args[0]).to.be.properAddress;    // contractAddress
+            expect(erc20Event.args[1]).to.equal(owner.address); // contractOwner
+            expect(erc20Event.args[2]).to.equal(publishData.dt_name);  // name
+            expect(erc20Event.args[3]).to.equal(publishData.dt_symbol); // symbol
+
+            // Verifica che l'ERC20 sia stato inizializzato correttamente
+            const ERC20Base = await ethers.getContractFactory("ERC20Base");
+            const erc20Instance = ERC20Base.attach(erc20Event.args[0]);
+
+            expect(await erc20Instance.getDTowner()).to.equal(owner.address);
+            expect(await erc20Instance.getMaxSupply()).to.equal(publishData.maxSupply_);
+            expect(await erc20Instance.getERC721()).to.equal(nftAddress);
+        });
+
+        it("Should fail to deploy with invalid parameters", async function () {
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
+
+            const invalidData = {
+                name: "",
+                symbol: "",
+                tokenURI: "",
+                dt_name: "",
+                dt_symbol: "",
+                maxSupply_: 0
+            };
+
+            await expect(
+                erc721Factory.deployERC721Contract(invalidData)
+            ).to.be.revertedWith("some error message");
+        });
+    });
+
+    describe("All-in-One Publishing", function () {
+        it("Should publish NFT and DT in one transaction", async function () {
+            // TODO Test for publishAllinOne
+            expect(1).to.equal(0);
+        });
     });
 });
 /*
