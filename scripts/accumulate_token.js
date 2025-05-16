@@ -56,7 +56,7 @@ const accumulateToken = async () => {
     console.log(balance.toString())
     //console.log(balance.div(2).toString())
 
-    let nftTxn = await myNftContract.accumulateToken(DT.address, balance.div(2).toString())
+    let nftTxn = await myNftContract.accumulateToken(DT.address, balance / 2n) //the n is need to specify to work with BigInt
     await nftTxn.wait()
     let nftTxn1 = await myNftContract.getaccumulatederc20Address()
     console.log(`accumulated Data Token address: `)
