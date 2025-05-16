@@ -14,7 +14,7 @@ const ERC20 = require(process.env.SC_DIR + "/artifacts/contracts/ERC20Base.sol/E
 const abi = ERC20.abi
 
 // Specify the name of the DT you want to read
-const desiredDTName = "Cobalt-148459714"; // Change this to the name of the DT you want to read
+const desiredDTName = "Platinum-789273310"; // Change this to the name of the DT you want to read
 
 let DTAddresses = JSON.parse(fs.readFileSync("./DTAddresses.json"));
 let DT;
@@ -44,7 +44,7 @@ console.log(`Address ${process.env.PUBLIC_KEY_ACCOUNT2} wants to fetch the NFT l
 const fetchNFT = async () => {
     //currentTime =  performance.now();
     let balance = await myNftContract.balanceOf(process.env.PUBLIC_KEY_ACCOUNT2)
-    console.log(`Token balance: ${Math.floor(balance / 1000000000000000000)}`)
+    console.log(`Token balance: ${ethers.formatEther(balance)}`)
     console.log(`Get NFT address`)
     let nftTxn = await myNftContract.getERC721()
     console.log(`NFT address! Check it out at: https://explorer.evm.testnet.iotaledger.net/address/${nftTxn}`)

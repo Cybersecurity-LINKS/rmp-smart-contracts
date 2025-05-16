@@ -38,7 +38,7 @@ const mintNFT = async () => {
         // dt_symbol: "DT" + tokenUri.type + "-" + tokenUri.id,
         dt_name: tokenUri._03_Type_of_material,
         dt_symbol: tokenUri._03_Type_of_material + "-" + tokenUri._01_Passport_Id,
-        maxSupply_: ethers.utils.parseEther(tokenUri._06_Quantity)
+        maxSupply_: ethers.parseEther(tokenUri._06_Quantity.toString())
     })
     //console.log(nftTxn)
     await nftTxn.wait()

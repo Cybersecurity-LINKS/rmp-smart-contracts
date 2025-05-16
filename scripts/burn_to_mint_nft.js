@@ -53,7 +53,7 @@ const burnToMintNFT = async () => {
         tokenURI: '{"product" : "value"}',
         dt_name: "DT",
         dt_symbol: "DT",
-        maxSupply_: ethers.utils.parseEther("0")
+        maxSupply_: ethers.parseEther("0")
     })
     let x = await nftTxn.wait()
     //console.log(x.logs)
