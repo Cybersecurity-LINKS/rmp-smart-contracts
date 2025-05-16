@@ -2,7 +2,6 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Create2.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
@@ -12,7 +11,6 @@ import "../interfaces/IERC721Factory.sol";
 import "../interfaces/IERC20Base.sol";
 
 contract ERC721Factory is Ownable, Deployer, IERC721Factory {
-    using SafeMath for uint256;
 
     uint256 private currentNFTCount;
     mapping(address => address) public createdERC721List;
@@ -64,7 +62,7 @@ contract ERC721Factory is Ownable, Deployer, IERC721Factory {
         string symbol
     );
 
-    constructor(address _base721Address, address _base20Address) {
+    constructor(address _base721Address, address _base20Address) Ownable(msg.sender) {
         require(_base721Address != address(0), "Invalid ERC721Base contract address");
         require(_base20Address != address(0), "Invalid ERC721Base contract address");
         currentNFTCount = 0;
@@ -72,6 +70,7 @@ contract ERC721Factory is Ownable, Deployer, IERC721Factory {
         addERC721Basetemplate(_base721Address);
         addERC20Basetemplate(_base20Address);
     }
+
 
     function publishAllinOne(
         PublishData memory _publishData

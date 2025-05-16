@@ -33,7 +33,7 @@ const myNftContract = new ethers.Contract(DT.address, abi, signer)
 const toAddress = process.env.PUBLIC_KEY_ACCOUNT2
 console.log(`Token transfer to ${toAddress}`)
 
-const amount = ethers.utils.parseEther((DT.amount/2).toString());
+const amount = ethers.parseEther((DT.amount / 2).toString());
 
 const sendToken = async () => {
     //currentTime =  performance.now();

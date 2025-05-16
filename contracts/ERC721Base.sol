@@ -4,7 +4,6 @@ pragma solidity ^0.8.18;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "../interfaces/IERC721Base.sol";
 import "../interfaces/IERC20Base.sol";
 import "../interfaces/IERC721Factory.sol";
@@ -13,8 +12,6 @@ contract ERC721Base is
 Initializable,
 ERC721Upgradeable,
 ERC721URIStorageUpgradeable {
-
-    using SafeMathUpgradeable for uint256;
 
     address private _factory;
     address[] private deployedERC20Tokens;
@@ -107,19 +104,15 @@ ERC721URIStorageUpgradeable {
 
     // The following functions are overrides required by Solidity.
     function burn(uint256 tokenId) external onlyNFTOwner {
+        require(ownerOf(tokenId) == msg.sender, "ERC721: caller is not token owner");
         _burn(tokenId);
-    }
-
-
-    function _burn(uint256 tokenId) internal override(ERC721URIStorageUpgradeable, ERC721Upgradeable) onlyNFTOwner {
-        super._burn(tokenId);
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721URIStorageUpgradeable, ERC721Upgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
-    function balanceOf(address caller) public view override(ERC721Upgradeable, IERC721Upgradeable) returns (uint256) {
+    function balanceOf(address caller) public view override(ERC721Upgradeable, IERC721) returns (uint256) {
         return super.balanceOf(caller);
     }
 
