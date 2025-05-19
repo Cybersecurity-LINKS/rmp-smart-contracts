@@ -2,7 +2,13 @@ const {expect} = require("chai");
 const {loadFixture} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const {anyValue} = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const {ethers} = require("hardhat");
-const {deployAllFixture, deployFactoryFixture, deployERC721Fixture, deployERC20Fixture} = require("./fixtures");
+const {
+    deployAllFixture,
+    deployFactoryFixture,
+    deployERC721Fixture,
+    deployERC20Fixture,
+    deployPassportFixture
+} = require("./fixtures");
 
 describe("Factory Test Suite: check fixture deploy", function () {
 
@@ -287,6 +293,219 @@ describe("ERC721Factory", function () {
         });
 
     });
+
+    describe("Data Token", function () {
+
+        it('Test Name', async function () {
+            const {dt_contract} = await loadFixture(deployPassportFixture);
+            expect(await dt_contract.name()).to.equal('Test Token');
+        });
+
+        it('Test Symbols', async function () {
+            const {dt_contract} = await loadFixture(deployPassportFixture);
+            expect(await dt_contract.symbol()).to.equal('TT');
+        });
+
+        it('Test Decimals', async function () {
+            const {dt_contract} = await loadFixture(deployPassportFixture);
+            expect(await dt_contract.decimals()).to.equal(18);
+        });
+
+        it('Total Supply', async function () {
+            const {dt_contract, totalSupply} = await loadFixture(deployPassportFixture);
+            expect(await dt_contract.totalSupply()).to.equal(totalSupply);
+        });
+
+        it("Balance of the deployer = total supply", async function () {
+            const {dt_contract, owner, totalSupply} = await loadFixture(deployPassportFixture);
+            const balance = await dt_contract.balanceOf(owner.address)
+            expect(balance).to.equal(totalSupply);
+        });
+
+        it("Transfer to 0x0 addr", async function () {
+            const {dt_contract} = await loadFixture(deployPassportFixture);
+            await expect(dt_contract.transfer(ethers.ZeroAddress, 10)).to.revertedWithCustomError(dt_contract, "ERC20InvalidReceiver");
+
+        });
+
+        it("Test Transfer 0 DT", async function () {
+            const {dt_contract, owner, user1, totalSupply} = await loadFixture(deployPassportFixture);
+            let amount = 0;
+            await expect(dt_contract.transfer(user1.address, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
+            expect(await dt_contract.balanceOf(owner.address)).to.equal(totalSupply - amount);
+            expect(await dt_contract.balanceOf(user1.address)).to.equal(amount);
+        });
+
+        it("Test Transfer: Owner pays user", async function () {
+            const {dt_contract, owner, user1, totalSupply} = await loadFixture(deployPassportFixture);
+            let amount = 10;
+            await expect(dt_contract.transfer(user1.address, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
+            expect(await dt_contract.balanceOf(owner.address)).to.equal(totalSupply - amount);
+            expect(await dt_contract.balanceOf(user1.address)).to.equal(amount);
+        });
+
+        it('Test Transfer: User pays user', async function () {
+            const {dt_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
+            let amount = 10;
+            await dt_contract.connect(owner).transfer(user1, amount);
+            await dt_contract.connect(user1).transfer(user2, amount);
+            expect(await dt_contract.balanceOf(user2)).to.equal(amount);
+        });
+
+        it('Test Transfer: User spends more than he owns', async function () {
+            const {dt_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
+            let amount = 10;
+            await dt_contract.connect(owner).transfer(user1, amount);
+            expect(await dt_contract.balanceOf(user1)).to.equal(amount);
+            await expect(dt_contract.connect(user1).transfer(user2, amount + 1)).to.be.revertedWithCustomError(dt_contract, "ERC20InsufficientBalance");
+        });
+
+        it('Test Burn', async function () {
+            const {dt_contract, owner, user1} = await loadFixture(deployPassportFixture);
+            let amount = 10;
+            await dt_contract.connect(owner).transfer(user1, amount);
+            await dt_contract.connect(user1).burn(amount);
+            await expect(await dt_contract.balanceOf(user1)).to.equal(0);
+        });
+
+        it('Test Allowance', async function () {
+            const {dt_contract, owner, user1} = await loadFixture(deployPassportFixture);
+            let amount = 10;
+            await dt_contract.connect(owner).approve(user1, amount);
+
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount);
+        });
+
+        it('Test Approve: spend all in one', async function () {
+            const {dt_contract, owner, user1, user2, totalSupply} = await loadFixture(deployPassportFixture);
+            let amount = 10;
+            await dt_contract.connect(owner).approve(user1, amount);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount);
+            await dt_contract.connect(user1).transferFrom(owner, user2, amount);
+
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - amount);
+            expect(await dt_contract.balanceOf(user2)).to.equal(amount);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(0);
+
+        });
+
+        it('Test Approve: spend all in many', async function () {
+            const {dt_contract, owner, user1, user2, totalSupply} = await loadFixture(deployPassportFixture);
+            let amount = 5;
+            await dt_contract.connect(owner).approve(user1, amount);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 1);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 1);
+            expect(await dt_contract.balanceOf(user2)).to.equal(1);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 2);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 2);
+            expect(await dt_contract.balanceOf(user2)).to.equal(2);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 3);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 3);
+            expect(await dt_contract.balanceOf(user2)).to.equal(3);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 4);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 4);
+            expect(await dt_contract.balanceOf(user2)).to.equal(4);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.balanceOf(user2)).to.equal(amount);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - amount);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(0);
+        });
+
+        it('Test Approve: spend not all', async function () {
+            const {dt_contract, owner, user1, user2, totalSupply} = await loadFixture(deployPassportFixture);
+            let amount = 5;
+
+            await dt_contract.connect(owner).approve(user1, amount);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 1);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 1);
+            expect(await dt_contract.balanceOf(user2)).to.equal(1);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 2);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 2);
+            expect(await dt_contract.balanceOf(user2)).to.equal(2);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 3);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 3);
+            expect(await dt_contract.balanceOf(user2)).to.equal(3);
+
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 3);
+        });
+
+        it('Test Approve: spend more than allowed', async function () {
+            const {dt_contract, owner, user1, user2, totalSupply} = await loadFixture(deployPassportFixture);
+            let amount = 5;
+            await dt_contract.connect(owner).approve(user1, amount);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 1);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 1);
+            expect(await dt_contract.balanceOf(user2)).to.equal(1);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 2);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 2);
+            expect(await dt_contract.balanceOf(user2)).to.equal(2);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 3);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 3);
+            expect(await dt_contract.balanceOf(user2)).to.equal(3);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount - 4);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - 4);
+            expect(await dt_contract.balanceOf(user2)).to.equal(4);
+
+            await dt_contract.connect(user1).transferFrom(owner, user2, 1);
+            expect(await dt_contract.balanceOf(user2)).to.equal(amount);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - amount);
+            expect(await dt_contract.allowance(owner, user1)).to.equal(0);
+
+            await expect(dt_contract.connect(user1).transferFrom(owner, user2, 1)).to.revertedWithCustomError(dt_contract, "ERC20InsufficientAllowance");
+        });
+
+        it('Test Approve: to 0x0', async function () {
+            const {dt_contract, owner, user1} = await loadFixture(deployPassportFixture);
+            let amount = 5;
+            await dt_contract.connect(owner).approve(user1, amount);
+
+            await expect(dt_contract.connect(user1).transferFrom(owner, ethers.ZeroAddress, amount)).to.be.revertedWithCustomError(dt_contract, 'ERC20InvalidReceiver');
+        });
+
+        it('Test Approve: approve the 0x0', async function () {
+            const {dt_contract, owner} = await loadFixture(deployPassportFixture);
+            let amount = 5;
+            await expect(dt_contract.connect(owner).approve(ethers.ZeroAddress, amount)).to.be.revertedWithCustomError(dt_contract, 'ERC20InvalidSpender');
+
+            //await expect(Token.connect('0x0000000000000000000000000000000000000000').transferFrom('0x0000000000000000000000000000000000000000', owner, amount).to.be.revertedWith(''));
+        });
+
+        it("Re mint", async function () {
+            const {dt_contract, owner, totalSupply} = await loadFixture(deployPassportFixture);
+            let amount = 10;
+            await dt_contract.burn(amount);
+            expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - amount);
+            expect(await dt_contract.totalSupply()).to.equal(totalSupply);
+            expect(await dt_contract.mint(amount)).to.emit(dt_contract, "rrr")
+        });
+
+    });
 });
 /*
     describe("Contract Interactions", function () {
@@ -334,11 +553,11 @@ describe("ERC721Factory", function () {
         });
 
         it("Should prevent non-owners from calling restricted functions", async function () {
-            const { erc721Factory, otherAccount } = await loadFixture(deployFixture);
+            const { erc721Factory, user1 } = await loadFixture(deployFixture);
 
             // Assuming there's a restricted function that only owner can call
             await expect(
-                erc721Factory.connect(otherAccount).restrictedFunction()
+                erc721Factory.connect(user1).restrictedFunction()
             ).to.be.revertedWith("Ownable: caller is not the owner");
         });
     });
