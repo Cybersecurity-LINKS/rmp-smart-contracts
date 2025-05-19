@@ -132,21 +132,106 @@ describe("ERC721Factory", function () {
             expect(await erc20Instance.getERC721()).to.equal(nftAddress);
         });
 
-        it("Should fail to deploy with invalid parameters", async function () {
+        it("Should fail to deploy with max supply 0", async function () {
             const {erc721Factory} = await loadFixture(deployFactoryFixture);
 
             const invalidData = {
-                name: "",
-                symbol: "",
-                tokenURI: "",
-                dt_name: "",
-                dt_symbol: "",
+                name: "Test NFT",
+                symbol: "TNFT",
+                tokenURI: "ipfs://test",
+                dt_name: "Test Token",
+                dt_symbol: "TT",
                 maxSupply_: 0
             };
 
             await expect(
-                erc721Factory.deployERC721Contract(invalidData)
-            ).to.be.revertedWith("some error message");
+                erc721Factory.publishAllinOne(invalidData)
+            ).to.be.revertedWith("Factory: The maximum supply must be > 0");
+        });
+
+        it("Should fail to deploy with empty name", async function () {
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
+
+            const invalidData = {
+                name: "",
+                symbol: "TNFT",
+                tokenURI: "ipfs://test",
+                dt_name: "Test Token",
+                dt_symbol: "TT",
+                maxSupply_: 10
+            };
+
+            await expect(
+                erc721Factory.publishAllinOne(invalidData)
+            ).to.be.revertedWith("Factory: NFT name empty");
+        });
+
+        it("Should fail to deploy with empty symbol", async function () {
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
+
+            const invalidData = {
+                name: "Test NFT",
+                symbol: "",
+                tokenURI: "ipfs://test",
+                dt_name: "Test Token",
+                dt_symbol: "TT",
+                maxSupply_: 10
+            };
+
+            await expect(
+                erc721Factory.publishAllinOne(invalidData)
+            ).to.be.revertedWith("Factory: NFT symbol empty");
+        });
+
+        it("Should fail to deploy with empty URI", async function () {
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
+
+            const invalidData = {
+                name: "Test NFT",
+                symbol: "TNFT",
+                tokenURI: "",
+                dt_name: "Test Token",
+                dt_symbol: "TT",
+                maxSupply_: 10
+            };
+
+            await expect(
+                erc721Factory.publishAllinOne(invalidData)
+            ).to.be.revertedWith("Factory: NFT URI empty");
+        });
+
+        it("Should fail to deploy with empty dt name", async function () {
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
+
+            const invalidData = {
+                name: "Test NFT",
+                symbol: "TNFT",
+                tokenURI: "ipfs://test",
+                dt_name: "",
+                dt_symbol: "TT",
+                maxSupply_: 10
+            };
+
+            await expect(
+                erc721Factory.publishAllinOne(invalidData)
+            ).to.be.revertedWith("Factory: Token name empty");
+        });
+
+        it("Should fail to deploy with empty dt symbol", async function () {
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
+
+            const invalidData = {
+                name: "Test NFT",
+                symbol: "TNFT",
+                tokenURI: "ipfs://test",
+                dt_name: "Test Token",
+                dt_symbol: "",
+                maxSupply_: 10
+            };
+
+            await expect(
+                erc721Factory.publishAllinOne(invalidData)
+            ).to.be.revertedWith("Factory: Token symbol empty");
         });
     });
 

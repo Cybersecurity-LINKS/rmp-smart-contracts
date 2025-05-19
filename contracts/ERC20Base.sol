@@ -50,7 +50,9 @@ IERC20Base {
             erc721address_ != address(0),
             "ERC721Factory address cannot be 0x00!"
         );
-        require(maxSupply_ > 0, "The maximum supply must be > 0");
+        require(bytes(name_).length > 0, "Base_20: Token name empty");
+        require(bytes(symbol_).length > 0, "Base_20: Token symbol empty");
+        require(maxSupply_ > 0, "Base_20: The maximum supply must be > 0");
 
         __ERC20_init(name_, symbol_);
         _erc721address = erc721address_;

@@ -64,7 +64,7 @@ contract ERC721Factory is Ownable, Deployer, IERC721Factory {
 
     constructor(address _base721Address, address _base20Address) Ownable(msg.sender) {
         require(_base721Address != address(0), "Invalid ERC721Base contract address");
-        require(_base20Address != address(0), "Invalid ERC721Base contract address");
+        require(_base20Address != address(0), "Invalid ERC20Base contract address");
         currentNFTCount = 0;
         currentDTAccomulatedCount = 0;
         addERC721Basetemplate(_base721Address);
@@ -75,6 +75,13 @@ contract ERC721Factory is Ownable, Deployer, IERC721Factory {
     function publishAllinOne(
         PublishData memory _publishData
     ) public returns (address erc721token){
+
+        require(bytes(_publishData.name).length > 0, "Factory: NFT name empty");
+        require(bytes(_publishData.symbol).length > 0, "Factory: NFT symbol empty");
+        require(bytes(_publishData.tokenURI).length > 0, "Factory: NFT URI empty");
+        require(bytes(_publishData.dt_name).length > 0, "Factory: Token name empty");
+        require(bytes(_publishData.dt_symbol).length > 0, "Factory: Token symbol empty");
+        require(_publishData.maxSupply_ > 0, "Factory: The maximum supply must be > 0");
 
         /** 
          *  deploy NFT token

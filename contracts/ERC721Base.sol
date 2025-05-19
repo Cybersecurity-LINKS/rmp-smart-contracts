@@ -52,6 +52,9 @@ ERC721URIStorageUpgradeable {
         string memory _tokenURI
     ) external initializer returns (bool) {
         require(owner != address(0), "Invalid NFT owner: zero address not valid!");
+        require(bytes(name_).length > 0, "Base_721: NFT name empty");
+        require(bytes(symbol_).length > 0, "Base_721: NFT symbol empty");
+        require(bytes(_tokenURI).length > 0, "Base_721: NFT URI empty");
 
         __ERC721_init(name_, symbol_);
         __ERC721URIStorage_init();
