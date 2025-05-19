@@ -2,7 +2,7 @@ const {expect} = require("chai");
 const {loadFixture} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const {anyValue} = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const {ethers} = require("hardhat");
-const {deployAllFixture, deployFactoryFixture} = require("./fixtures");
+const {deployAllFixture, deployFactoryFixture, deployERC721Fixture, deployERC20Fixture} = require("./fixtures");
 
 describe("Factory Test Suite: check fixture deploy", function () {
 
@@ -61,8 +61,43 @@ describe("Factory Test Suite: check fixture deploy", function () {
 describe("ERC721Factory", function () {
 
     describe("Contract Deployment", function () {
+        it("Should revert when trying to initialize with zero addresses ERC721", async function () {
+            const {erc20Base} = await loadFixture(deployERC20Fixture);
+            const ERC721Factory = await ethers.getContractFactory("ERC721Factory");
+
+            await expect(
+                ERC721Factory.deploy(
+                    ethers.ZeroAddress,
+                    erc20Base.getAddress()
+                )
+            ).to.be.revertedWith("Invalid ERC721Base contract address");
+        });
+
+        it("Should revert when trying to initialize with zero addresses ERC20", async function () {
+            const {erc721Base} = await loadFixture(deployERC721Fixture);
+            const ERC721Factory = await ethers.getContractFactory("ERC721Factory");
+
+            await expect(
+                ERC721Factory.deploy(
+                    erc721Base.getAddress(),
+                    ethers.ZeroAddress
+                )
+            ).to.be.revertedWith("Invalid ERC20Base contract address");
+        });
+
+        it("Should revert when trying to initialize with zero addresses both ERC20 and ERC721", async function () {
+            const ERC721Factory = await ethers.getContractFactory("ERC721Factory");
+
+            await expect(
+                ERC721Factory.deploy(
+                    ethers.ZeroAddress,
+                    ethers.ZeroAddress
+                )
+            ).to.be.revertedWith("Invalid ERC721Base contract address");
+        });
+
         it("Should deploy new ERC721 contract correctly", async function () {
-            const {erc721Factory, owner} = await loadFixture(deployFactoryFixture);
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
 
             const publishData = {
                 name: "Test NFT",
@@ -86,7 +121,6 @@ describe("ERC721Factory", function () {
                     publishData.tokenURI
                 );
         });
-
 
         it("Should deploy new ERC20 contract correctly", async function () {
             const {erc721Factory, owner} = await loadFixture(deployFactoryFixture);
@@ -131,7 +165,8 @@ describe("ERC721Factory", function () {
             expect(await erc20Instance.getMaxSupply()).to.equal(publishData.maxSupply_);
             expect(await erc20Instance.getERC721()).to.equal(nftAddress);
         });
-
+    });
+    describe("All-in-One Publishing", function () {
         it("Should fail to deploy with max supply 0", async function () {
             const {erc721Factory} = await loadFixture(deployFactoryFixture);
 
@@ -233,13 +268,24 @@ describe("ERC721Factory", function () {
                 erc721Factory.publishAllinOne(invalidData)
             ).to.be.revertedWith("Factory: Token symbol empty");
         });
-    });
 
-    describe("All-in-One Publishing", function () {
         it("Should publish NFT and DT in one transaction", async function () {
-            // TODO Test for publishAllinOne
-            expect(1).to.equal(0);
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
+
+            const invalidData = {
+                name: "Test NFT",
+                symbol: "TNFT",
+                tokenURI: "ipfs://test",
+                dt_name: "Test Token",
+                dt_symbol: "TT",
+                maxSupply_: 10
+            };
+
+            await expect(
+                erc721Factory.publishAllinOne(invalidData)
+            ).to.emit(erc721Factory, "NFTCreated").and.to.emit(erc721Factory, "ERC20ContractDeployed");
         });
+
     });
 });
 /*
