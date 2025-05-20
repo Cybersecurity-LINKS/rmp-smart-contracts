@@ -275,6 +275,23 @@ describe("ERC721Factory", function () {
             ).to.be.revertedWith("Factory: Token symbol empty");
         });
 
+        it("Should fail to deploy with all empty and 0", async function () {
+            const {erc721Factory} = await loadFixture(deployFactoryFixture);
+
+            const invalidData = {
+                name: "",
+                symbol: "",
+                tokenURI: "",
+                dt_name: "",
+                dt_symbol: "",
+                maxSupply_: 0
+            };
+
+            await expect(
+                erc721Factory.publishAllinOne(invalidData)
+            ).to.be.revertedWith("Factory: NFT name empty");
+        });
+
         it("Should publish NFT and DT in one transaction", async function () {
             const {erc721Factory} = await loadFixture(deployFactoryFixture);
 
@@ -318,8 +335,7 @@ describe("ERC721Factory", function () {
 
         it("Balance of the deployer = total supply", async function () {
             const {dt_contract, owner, totalSupply} = await loadFixture(deployPassportFixture);
-            const balance = await dt_contract.balanceOf(owner.address)
-            expect(balance).to.equal(totalSupply);
+            expect(await dt_contract.balanceOf(owner.address)).to.equal(totalSupply);
         });
 
         it("Transfer to 0x0 addr", async function () {
@@ -331,7 +347,7 @@ describe("ERC721Factory", function () {
         it("Test Transfer 0 DT", async function () {
             const {dt_contract, owner, user1, totalSupply} = await loadFixture(deployPassportFixture);
             let amount = 0;
-            await expect(dt_contract.transfer(user1.address, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
+            expect(await dt_contract.transfer(user1.address, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
             expect(await dt_contract.balanceOf(owner.address)).to.equal(totalSupply - amount);
             expect(await dt_contract.balanceOf(user1.address)).to.equal(amount);
         });
@@ -339,23 +355,27 @@ describe("ERC721Factory", function () {
         it("Test Transfer: Owner pays user", async function () {
             const {dt_contract, owner, user1, totalSupply} = await loadFixture(deployPassportFixture);
             let amount = 10;
-            await expect(dt_contract.transfer(user1.address, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
+            expect(await dt_contract.transfer(user1.address, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
             expect(await dt_contract.balanceOf(owner.address)).to.equal(totalSupply - amount);
             expect(await dt_contract.balanceOf(user1.address)).to.equal(amount);
         });
 
         it('Test Transfer: User pays user', async function () {
-            const {dt_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
+            const {dt_contract, owner, user1, user2, totalSupply} = await loadFixture(deployPassportFixture);
             let amount = 10;
-            await dt_contract.connect(owner).transfer(user1, amount);
-            await dt_contract.connect(user1).transfer(user2, amount);
+            expect(await dt_contract.connect(owner).transfer(user1, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
+            expect(await dt_contract.balanceOf(owner.address)).to.equal(totalSupply - amount);
+            expect(await dt_contract.balanceOf(user1.address)).to.equal(amount);
+            expect(await dt_contract.connect(user1).transfer(user2, amount)).to.emit(dt_contract, "Transfer").withArgs(user1.address, user2.address, amount);
+            expect(await dt_contract.balanceOf(user1.address)).to.equal(amount - amount);
             expect(await dt_contract.balanceOf(user2)).to.equal(amount);
         });
 
         it('Test Transfer: User spends more than he owns', async function () {
-            const {dt_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
+            const {dt_contract, owner, user1, user2, totalSupply} = await loadFixture(deployPassportFixture);
             let amount = 10;
-            await dt_contract.connect(owner).transfer(user1, amount);
+            expect(await dt_contract.connect(owner).transfer(user1, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
+            expect(await dt_contract.balanceOf(owner.address)).to.equal(totalSupply - amount);
             expect(await dt_contract.balanceOf(user1)).to.equal(amount);
             await expect(dt_contract.connect(user1).transfer(user2, amount + 1)).to.be.revertedWithCustomError(dt_contract, "ERC20InsufficientBalance");
         });
@@ -363,15 +383,15 @@ describe("ERC721Factory", function () {
         it('Test Burn', async function () {
             const {dt_contract, owner, user1} = await loadFixture(deployPassportFixture);
             let amount = 10;
-            await dt_contract.connect(owner).transfer(user1, amount);
-            await dt_contract.connect(user1).burn(amount);
-            await expect(await dt_contract.balanceOf(user1)).to.equal(0);
+            expect(await dt_contract.connect(owner).transfer(user1, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
+            expect(await dt_contract.connect(user1).burn(amount)).to.emit(dt_contract, "Transfer").withArgs(user1.address, ethers.ZeroAddress, amount);
+            expect(await dt_contract.balanceOf(user1)).to.equal(0);
         });
 
         it('Test Allowance', async function () {
             const {dt_contract, owner, user1} = await loadFixture(deployPassportFixture);
             let amount = 10;
-            await dt_contract.connect(owner).approve(user1, amount);
+            expect(await dt_contract.connect(owner).approve(user1, amount)).to.emit(dt_contract, "Approval").withArgs(owner.address, user1.address, amount);
 
             expect(await dt_contract.allowance(owner, user1)).to.equal(amount);
         });
@@ -499,67 +519,14 @@ describe("ERC721Factory", function () {
         it("Re mint", async function () {
             const {dt_contract, owner, totalSupply} = await loadFixture(deployPassportFixture);
             let amount = 10;
-            await dt_contract.burn(amount);
+            expect(await dt_contract.totalSupply()).to.equal(await dt_contract.getMaxSupply());
+            expect(await dt_contract.burn(amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, ethers.ZeroAddress, amount);
             expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - amount);
-            expect(await dt_contract.totalSupply()).to.equal(totalSupply);
-            expect(await dt_contract.mint(amount)).to.emit(dt_contract, "rrr")
+            expect(await dt_contract.totalSupply()).to.equal(totalSupply - amount);
+            expect(await dt_contract.getMaxSupply()).to.equal(await dt_contract.totalSupply() + BigInt(amount));
+            expect(await dt_contract.mint(owner.address, amount)).to.emit(dt_contract, "Transfer").withArgs(ethers.ZeroAddress, owner.address, amount);
+            expect(await dt_contract.totalSupply()).to.equal(await dt_contract.getMaxSupply());
+            expect(await dt_contract.balanceOf(owner)).to.be.equal(await dt_contract.getMaxSupply());
         });
-
     });
 });
-/*
-    describe("Contract Interactions", function () {
-        it("Should allow Deployer contract to create new instances", async function () {
-            const { deployerContract, erc721Base } = await loadFixture(deployFixture);
-
-            const tx = await deployerContract.deploy(await erc721Base.getAddress());
-            const receipt = await tx.wait();
-
-            expect(receipt.logs[0].eventName).to.equal("InstanceDeployed");
-            const deployedAddress = receipt.logs[0].args[0];
-            expect(deployedAddress).to.be.properAddress;
-        });
-
-        it("Should create working ERC721 instances through the factory", async function () {
-            const { erc721Factory } = await loadFixture(deployFixture);
-
-            // Assuming the factory has a createToken method with name and symbol parameters
-            const tx = await erc721Factory.createToken("Test Token", "TST");
-            const receipt = await tx.wait();
-
-            // Assuming the factory emits an event with the new token address
-            const newTokenAddress = receipt.logs[0].args.tokenAddress;
-            expect(newTokenAddress).to.be.properAddress;
-
-            // Verify the new token instance
-            const ERC721Base = await ethers.getContractFactory("ERC721Base");
-            const newToken = ERC721Base.attach(newTokenAddress);
-
-            expect(await newToken.name()).to.equal("Test Token");
-            expect(await newToken.symbol()).to.equal("TST");
-        });
-    });
-
-    describe("Error Handling", function () {
-        it("Should revert when trying to initialize with zero addresses", async function () {
-            const ERC721Factory = await ethers.getContractFactory("ERC721Factory");
-
-            await expect(
-                ERC721Factory.deploy(
-                    ethers.ZeroAddress,
-                    ethers.ZeroAddress
-                )
-            ).to.be.revertedWith("Invalid address");
-        });
-
-        it("Should prevent non-owners from calling restricted functions", async function () {
-            const { erc721Factory, user1 } = await loadFixture(deployFixture);
-
-            // Assuming there's a restricted function that only owner can call
-            await expect(
-                erc721Factory.connect(user1).restrictedFunction()
-            ).to.be.revertedWith("Ownable: caller is not the owner");
-        });
-    });
-
- */
