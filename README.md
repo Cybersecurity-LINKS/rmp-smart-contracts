@@ -167,6 +167,14 @@ The NFT will be automatically added in MetaMask while you should need to add the
 go to the token tab in MetaMask click the three dots a select 'Import Tokens' paste there the address shown in the
 confirmation pop up.
 
+## Test
+
+To run the test on the smart contracts, execute this command:
+
+```shell
+npx hardhat test 
+```
+
 ## Verify the deployed smart contracts code
 
 Verifying a contract means making its source code public, along with the compiler settings you used, which

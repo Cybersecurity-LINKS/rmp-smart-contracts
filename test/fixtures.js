@@ -105,6 +105,12 @@ async function deployPassportFixture() {
     };
 
     await erc721Factory.publishAllinOne(passport);
+
+    const nfts = await erc721Factory.getAllNFTCreatedAddress();
+    const nft_addr = nfts[nfts.length - 1];
+    const ERC721 = await ethers.getContractFactory("ERC721Base");
+    const nft_contract = ERC721.attach(nft_addr);
+
     const dts = await erc721Factory.getAllDTCreatedAddress();
     const dt_addr = dts[dts.length - 1];
     const ERC20 = await ethers.getContractFactory("ERC20Base");
@@ -118,6 +124,7 @@ async function deployPassportFixture() {
         owner,
         user1,
         user2,
+        nft_contract,
         dt_contract,
         totalSupply
     };
