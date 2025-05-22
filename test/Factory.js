@@ -516,6 +516,16 @@ describe("ERC721Factory", function () {
             //await expect(Token.connect('0x0000000000000000000000000000000000000000').transferFrom('0x0000000000000000000000000000000000000000', owner, amount).to.be.revertedWith(''));
         });
 
+        it('Test Approve: remove the approval', async function () {
+            //TODO
+            expect(0).to.equal(1);
+        });
+
+        it('Test Approve: remove the approval after the approved has spent', async function () {
+            //TODO
+            expect(0).to.equal(1);
+        });
+
         it("Re mint", async function () {
             const {dt_contract, owner, totalSupply} = await loadFixture(deployPassportFixture);
             let amount = 10;
@@ -656,5 +666,24 @@ describe("ERC721Factory", function () {
                 .withArgs(user1.address, 1);
         });
 
+        it("Approval: remove the approval for all", async function () {
+            const {nft_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
+
+            await expect(nft_contract.connect(owner).setApprovalForAll(user1.address))
+                .to.emit(nft_contract, "Approval").withArgs(owner.address, user1.address, 1);
+
+            expect(await nft_contract.connect(user1).getApproved(1))
+                .to.equal(user1.address);
+
+            expect(await nft_contract.connect(owner).setApprovalForAll(ethers.ZeroAddress))
+                .to.emit(nft_contract, "Approval").withArgs(owner.address, ethers.ZeroAddress, 1);
+
+            expect(await nft_contract.connect(user1).getApproved(1))
+                .to.equal(ethers.ZeroAddress);
+
+            await expect(nft_contract.connect(user1).safeTransferFrom(owner.address, user2.address, 1))
+                .to.be.revertedWithCustomError(nft_contract, "ERC721InsufficientApproval")
+                .withArgs(user1.address, 1);
+        });
     });
 });
