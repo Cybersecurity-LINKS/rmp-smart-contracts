@@ -630,8 +630,30 @@ describe("ERC721Factory", function () {
         it('Approval spend without approval', async function () {
             const {nft_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
 
-            // TODO
+            await expect(nft_contract.connect(user1).safeTransferFrom(owner.address, user2.address, 1))
+                .to.be.revertedWithCustomError(nft_contract, "ERC721InsufficientApproval")
+                .withArgs(user1.address, 1);
 
+        });
+
+        it("Approval: remove the approval", async function () {
+            const {nft_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
+
+            await expect(nft_contract.connect(owner).approve(user1.address, 1))
+                .to.emit(nft_contract, "Approval").withArgs(owner.address, user1.address, 1);
+
+            expect(await nft_contract.connect(user1).getApproved(1))
+                .to.equal(user1.address);
+
+            expect(await nft_contract.connect(owner).approve(ethers.ZeroAddress, 1))
+                .to.emit(nft_contract, "Approval").withArgs(owner.address, ethers.ZeroAddress, 1);
+
+            expect(await nft_contract.connect(user1).getApproved(1))
+                .to.equal(ethers.ZeroAddress);
+
+            await expect(nft_contract.connect(user1).safeTransferFrom(owner.address, user2.address, 1))
+                .to.be.revertedWithCustomError(nft_contract, "ERC721InsufficientApproval")
+                .withArgs(user1.address, 1);
         });
 
     });
