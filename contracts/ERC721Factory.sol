@@ -265,7 +265,9 @@ contract ERC721Factory is Ownable, Deployer, IERC721Factory {
         uri = string.concat(uri, '"', _publishData.name, '" : ');
         uri = string.concat(uri, _publishData.tokenURI, ', ');
 
-        for (uint256 i = 0; i < accumulatederc20.length; i++) {
+        uint length = accumulatederc20.length;
+
+        for (uint256 i = 0; i < length; i++) {
             dtaddress = accumulatederc20[i];
 
             //get DTname
