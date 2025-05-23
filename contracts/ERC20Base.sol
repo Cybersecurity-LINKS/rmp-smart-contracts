@@ -26,7 +26,7 @@ IERC20Base {
     event PermitData(bytes32 domain_separator, bytes32 permit_gasg, bytes32 digest);
 
     modifier onlyOwner() {
-        require(msg.sender == _owner);
+        require(msg.sender == _owner, "Only Owner function");
         _;
     }
 
