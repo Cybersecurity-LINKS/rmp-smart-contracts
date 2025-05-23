@@ -692,17 +692,15 @@ describe("ERC721Factory", function () {
         it("Approval: remove the approval for all", async function () {
             const {nft_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
 
-            await expect(nft_contract.connect(owner).setApprovalForAll(user1.address))
-                .to.emit(nft_contract, "Approval").withArgs(owner.address, user1.address, 1);
+            expect(await nft_contract.connect(owner).setApprovalForAll(user1.address, true))
+                .to.emit(nft_contract, "ApprovalForAll").withArgs(owner.address, user1.address, true);
 
-            expect(await nft_contract.connect(user1).getApproved(1))
-                .to.equal(user1.address);
+            expect(await nft_contract.isApprovedForAll(owner.address, user1.address)).to.be.true;
 
-            expect(await nft_contract.connect(owner).setApprovalForAll(ethers.ZeroAddress))
-                .to.emit(nft_contract, "Approval").withArgs(owner.address, ethers.ZeroAddress, 1);
+            expect(await nft_contract.connect(owner).setApprovalForAll(user1.address, false))
+                .to.emit(nft_contract, "ApprovalForAll").withArgs(owner.address, user1.address, false);
 
-            expect(await nft_contract.connect(user1).getApproved(1))
-                .to.equal(ethers.ZeroAddress);
+            expect(await nft_contract.isApprovedForAll(owner.address, user1.address)).to.be.false;
 
             await expect(nft_contract.connect(user1).safeTransferFrom(owner.address, user2.address, 1))
                 .to.be.revertedWithCustomError(nft_contract, "ERC721InsufficientApproval")
