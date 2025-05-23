@@ -74,7 +74,7 @@ describe("ERC721Factory", function () {
 
             await expect(
                 ERC721Factory.deploy(
-                    ethers.ZeroAddress,
+                    ZeroAddress,
                     erc20Base.getAddress()
                 )
             ).to.be.revertedWith("Invalid ERC721Base contract address");
@@ -87,7 +87,7 @@ describe("ERC721Factory", function () {
             await expect(
                 ERC721Factory.deploy(
                     erc721Base.getAddress(),
-                    ethers.ZeroAddress
+                    ZeroAddress
                 )
             ).to.be.revertedWith("Invalid ERC20Base contract address");
         });
@@ -97,8 +97,8 @@ describe("ERC721Factory", function () {
 
             await expect(
                 ERC721Factory.deploy(
-                    ethers.ZeroAddress,
-                    ethers.ZeroAddress
+                    ZeroAddress,
+                    ZeroAddress
                 )
             ).to.be.revertedWith("Invalid ERC721Base contract address");
         });
@@ -341,7 +341,7 @@ describe("ERC721Factory", function () {
 
         it("Transfer to 0x0 addr", async function () {
             const {dt_contract} = await loadFixture(deployPassportFixture);
-            await expect(dt_contract.transfer(ethers.ZeroAddress, 10)).to.revertedWithCustomError(dt_contract, "ERC20InvalidReceiver");
+            await expect(dt_contract.transfer(ZeroAddress, 10)).to.revertedWithCustomError(dt_contract, "ERC20InvalidReceiver");
 
         });
 
@@ -385,7 +385,7 @@ describe("ERC721Factory", function () {
             const {dt_contract, owner, user1} = await loadFixture(deployPassportFixture);
             let amount = 10;
             expect(await dt_contract.connect(owner).transfer(user1, amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user1.address, amount);
-            expect(await dt_contract.connect(user1).burn(amount)).to.emit(dt_contract, "Transfer").withArgs(user1.address, ethers.ZeroAddress, amount);
+            expect(await dt_contract.connect(user1).burn(amount)).to.emit(dt_contract, "Transfer").withArgs(user1.address, ZeroAddress, amount);
             expect(await dt_contract.balanceOf(user1)).to.equal(0);
         });
 
@@ -506,13 +506,13 @@ describe("ERC721Factory", function () {
             let amount = 5;
             await dt_contract.connect(owner).approve(user1, amount);
 
-            await expect(dt_contract.connect(user1).transferFrom(owner, ethers.ZeroAddress, amount)).to.be.revertedWithCustomError(dt_contract, 'ERC20InvalidReceiver');
+            await expect(dt_contract.connect(user1).transferFrom(owner, ZeroAddress, amount)).to.be.revertedWithCustomError(dt_contract, 'ERC20InvalidReceiver');
         });
 
         it('Test Approve: approve to the 0x0', async function () {
             const {dt_contract, owner} = await loadFixture(deployPassportFixture);
             let amount = 5;
-            await expect(dt_contract.connect(owner).approve(ethers.ZeroAddress, amount)).to.be.revertedWithCustomError(dt_contract, 'ERC20InvalidSpender');
+            await expect(dt_contract.connect(owner).approve(ZeroAddress, amount)).to.be.revertedWithCustomError(dt_contract, 'ERC20InvalidSpender');
 
             //await expect(Token.connect('0x0000000000000000000000000000000000000000').transferFrom('0x0000000000000000000000000000000000000000', owner, amount).to.be.revertedWith(''));
         });
@@ -553,11 +553,11 @@ describe("ERC721Factory", function () {
             const {dt_contract, owner, totalSupply} = await loadFixture(deployPassportFixture);
             let amount = 10;
             expect(await dt_contract.totalSupply()).to.equal(await dt_contract.getMaxSupply());
-            expect(await dt_contract.burn(amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, ethers.ZeroAddress, amount);
+            expect(await dt_contract.burn(amount)).to.emit(dt_contract, "Transfer").withArgs(owner.address, ZeroAddress, amount);
             expect(await dt_contract.balanceOf(owner)).to.equal(totalSupply - amount);
             expect(await dt_contract.totalSupply()).to.equal(totalSupply - amount);
             expect(await dt_contract.getMaxSupply()).to.equal(await dt_contract.totalSupply() + BigInt(amount));
-            expect(await dt_contract.mint(owner.address, amount)).to.emit(dt_contract, "Transfer").withArgs(ethers.ZeroAddress, owner.address, amount);
+            expect(await dt_contract.mint(owner.address, amount)).to.emit(dt_contract, "Transfer").withArgs(ZeroAddress, owner.address, amount);
             expect(await dt_contract.totalSupply()).to.equal(await dt_contract.getMaxSupply());
             expect(await dt_contract.balanceOf(owner)).to.be.equal(await dt_contract.getMaxSupply());
         });
@@ -678,11 +678,11 @@ describe("ERC721Factory", function () {
             expect(await nft_contract.connect(user1).getApproved(1))
                 .to.equal(user1.address);
 
-            expect(await nft_contract.connect(owner).approve(ethers.ZeroAddress, 1))
-                .to.emit(nft_contract, "Approval").withArgs(owner.address, ethers.ZeroAddress, 1);
+            expect(await nft_contract.connect(owner).approve(ZeroAddress, 1))
+                .to.emit(nft_contract, "Approval").withArgs(owner.address, ZeroAddress, 1);
 
             expect(await nft_contract.connect(user1).getApproved(1))
-                .to.equal(ethers.ZeroAddress);
+                .to.equal(ZeroAddress);
 
             await expect(nft_contract.connect(user1).safeTransferFrom(owner.address, user2.address, 1))
                 .to.be.revertedWithCustomError(nft_contract, "ERC721InsufficientApproval")
