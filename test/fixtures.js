@@ -35,16 +35,6 @@ async function deployAllFixture() {
     };
 }
 
-
-// Fixture for Deployer
-async function deployDeployerFixture() {
-    const [owner, user1] = await ethers.getSigners();
-    const Deployer = await ethers.deployContract("Deployer");
-    await Deployer.waitForDeployment();
-
-    return {Deployer, owner, user1};
-}
-
 // Fixture for token ERC721
 async function deployERC721Fixture() {
     const [owner, user1] = await ethers.getSigners();
@@ -132,7 +122,6 @@ async function deployPassportFixture() {
 
 module.exports = {
     deployAllFixture,
-    deployDeployerFixture,
     deployERC721Fixture,
     deployERC20Fixture,
     deployFactoryFixture,
