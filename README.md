@@ -63,7 +63,7 @@ $ npm install
 $ npx hardhat node
 ```
 
-2. In other shell we can run the deploy script by specifying the local hardhat network
+2. In another shell we can run the deployment script by specifying the local hardhat network
 
 ```sh
 $ npx hardhat run --network localhost scripts/deploy.js
@@ -75,7 +75,7 @@ $ npx hardhat run --network localhost scripts/deploy.js
 $ npx hardhat --network localhost faucet <eth-address>
 ```
 
-## Deploy the contracts and interacts with them
+## Deploy the contracts and interact with them
 
 1. Deploy the contracts
 
@@ -122,7 +122,7 @@ $ node ./scripts/burn_to_mint_nft.js
 ### MetaMask Configuration
 
 - Download MetaMask from [here](https://MetaMask.io/download)
-- Agree to the terms of use then click 'Create a new Wallet'
+- Agree to the terms of use, then click 'Create a new Wallet'
 - Click 'Create a new wallet'
 - Decide to agree or not to help improve MetaMask
 - Create a password
@@ -151,7 +151,7 @@ In this way all the transactions will be signed in the selected network
 
 ### Usage
 
-To deploy a webpage that allows to mint a RMP run these commands:
+To deploy a webpage that allows minting a RMP, run these commands:
 
 ```shell
 cd frontend_miner
@@ -160,19 +160,38 @@ npm run dev
 ```
 
 The terminal will tell the address of the webpage.
-In that page is possible to insert the RMP data, the mint button in the bottom.
+On that page it is possible to insert the RMP data, the mint button in the bottom.
 At that point MetaMask will ask for your password (just the first time) and then will ask to confirm the transaction.
 A confirmation pop up will appear, download the file to not lose the NFT and the DT addresses.
-The NFT will be automatically added in MetaMask while you should need to add the DT,
-go to the token tab in MetaMask click the three dots a select 'Import Tokens' paste there the address shown in the
-confirmation pop up.
+The NFT will be automatically added in MetaMask while you should need to add the DT.
+To add it, go to the token tab in MetaMask click the three dots
+and select 'Import Tokens' paste there the address shown in the confirmation pop up.
 
 ## Test
 
-To run the test on the smart contracts, execute this command:
+A suite of tests has been written to test the correct functionality of the Smart Constracts.
+To run all the tests, execute this command:
 
 ```shell
 npx hardhat test 
+```
+
+To run the tests for a specific component, run one of those commands:
+
+```shell
+npx hardhat test test/FixturesTest.js
+``` 
+
+```shell
+npx hardhat test test/Factory.js
+```
+
+```shell
+npx hardhat test test/NFT.js
+```
+
+```shell
+npx hardhat test test/DataToken.js  
 ```
 
 ## Verify the deployed smart contracts code
