@@ -9,6 +9,7 @@ const {
     deployERC20Fixture,
     deployPassportFixture
 } = require("./fixtures");
+const {ZeroAddress} = require("ethers");
 
 describe("Factory Test Suite: check fixture deploy", function () {
 
@@ -517,13 +518,35 @@ describe("ERC721Factory", function () {
         });
 
         it('Test Approve: remove the approval', async function () {
-            //TODO
-            expect(0).to.equal(1);
+            const {dt_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
+            const amount = 10;
+
+            expect(await dt_contract.connect(owner).approve(user1, amount)).to.emit(dt_contract, "Approval").withArgs(owner.address, user1.address, amount);
+
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount);
+
+            expect(await dt_contract.connect(owner).approve(user1, 0)).to.emit(dt_contract, "Approval").withArgs(owner.address, user1.address, 0);
+
+            expect(await dt_contract.allowance(owner, user1)).to.equal(0);
+
+            await expect(dt_contract.connect(user1).transferFrom(owner, user2, 1)).to.revertedWithCustomError(dt_contract, "ERC20InsufficientAllowance");
         });
 
         it('Test Approve: remove the approval after the approved has spent', async function () {
-            //TODO
-            expect(0).to.equal(1);
+            const {dt_contract, owner, user1, user2} = await loadFixture(deployPassportFixture);
+            const amount = 10;
+
+            expect(await dt_contract.connect(owner).approve(user1, amount)).to.emit(dt_contract, "Approval").withArgs(owner.address, user1.address, amount);
+
+            expect(await dt_contract.allowance(owner, user1)).to.equal(amount);
+
+            expect(await dt_contract.connect(user1).transferFrom(owner, user2, 1)).to.emit(dt_contract, "Transfer").withArgs(owner.address, user2.address, 1);
+
+            expect(await dt_contract.connect(owner).approve(user1, 0)).to.emit(dt_contract, "Approval").withArgs(owner.address, user1.address, 0);
+
+            expect(await dt_contract.allowance(owner, user1)).to.equal(0);
+
+            await expect(dt_contract.connect(user1).transferFrom(owner, user2, 1)).to.revertedWithCustomError(dt_contract, "ERC20InsufficientAllowance");
         });
 
         it("Re mint", async function () {
