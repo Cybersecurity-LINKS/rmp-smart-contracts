@@ -26,7 +26,7 @@ IERC20Base {
     event PermitData(bytes32 domain_separator, bytes32 permit_gasg, bytes32 digest);
 
     modifier onlyOwner() {
-        require(msg.sender == _owner);
+        require(msg.sender == _owner, "Only Owner function");
         _;
     }
 
@@ -195,18 +195,4 @@ IERC20Base {
     function nonces(address requester) external view returns (uint256) {
         return nonces_[requester];
     }
-
-    /**
-     * @dev fallback function
-     *      this is a default fallback function in which receives
-     *      the collected ether.
-     */
-    fallback() external payable {}
-
-    /**
-     * @dev receive function
-     *      this is a default receive function in which receives
-     *      the collected ether.
-     */
-    receive() external payable {}
 }
