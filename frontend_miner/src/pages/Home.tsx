@@ -510,139 +510,146 @@ function HomePage() {
                                 maxLength={50}
                             />
 
-                            <DateInput
-                                isRequired
-                                label="Creation date"
-                                labelPlacement="outside"
-                                onChange={handleDateChange}
-                                defaultValue={today(getLocalTimeZone())} //today(getLocalTimeZone())
-                                minValue={minDate}
-                                maxValue={maxDate}
-                                variant="bordered"
-                                classNames={{
-                                    input: "bg-white"
-                                }}
-                                startContent={<Calendar className="text-default-500" size={20}/>}
-                            />
+                            <div className="flex w-full gap-6">
+                                <Autocomplete
+                                    isRequired
+                                    //isVirtualized
+                                    labelPlacement="outside"
+                                    label="Company"
+                                    placeholder="Select a company"
+                                    classNames={{
+                                        base: "max-w-full",
+                                        listbox: "bg-white",
+                                        popoverContent: "border border-default-200 bg-white"
+                                    }}
+                                    variant="bordered"
+                                    defaultSelectedKey={companies[1].key}
+                                    defaultItems={companies}
+                                    onSelectionChange={(key: React.Key | null) => handleCompanyChange(key?.toString() || '')}
+                                >
+                                    {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
+                                </Autocomplete>
 
-                            <Input
-                                isRequired
-                                label="Type of material"
-                                labelPlacement="outside"
-                                name="typeOfMaterial"
-                                placeholder="Enter the material"
-                                value={formValues.typeOfMaterial}
-                                onChange={handleInputChange}
-                                variant="bordered"
-                                classNames={{
-                                    input: "bg-white"
-                                }}
-                                maxLength={50}
-                            />
+                                <Input
+                                    isRequired
+                                    label="Mine"
+                                    labelPlacement="outside"
+                                    name="mine"
+                                    placeholder="Enter mine name"
+                                    value={formValues.mine}
+                                    onChange={handleInputChange}
+                                    variant="bordered"
+                                    classNames={{
+                                        input: "bg-white"
+                                    }}
+                                    maxLength={50}
+                                />
+                            </div>
 
-                            <Input
-                                //isRequired
-                                label="Quality"
-                                labelPlacement="outside"
-                                name="quality"
-                                placeholder="Enter the quality"
-                                value={formValues.quality}
-                                onChange={handleInputChange}
-                                variant="bordered"
-                                classNames={{
-                                    input: "bg-white"
-                                }}
-                                maxLength={50}
-                            />
+                            <div className="flex w-full gap-6">
+                                <DateInput
+                                    isRequired
+                                    label="Creation date"
+                                    labelPlacement="outside"
+                                    onChange={handleDateChange}
+                                    defaultValue={today(getLocalTimeZone())} //today(getLocalTimeZone())
+                                    minValue={minDate}
+                                    maxValue={maxDate}
+                                    variant="bordered"
+                                    classNames={{
+                                        input: "bg-white"
+                                    }}
+                                    startContent={<Calendar className="text-default-500" size={20}/>}
+                                />
 
-                            <DateRangePicker
-                                //isRequired
-                                visibleMonths={2}
-                                firstDayOfWeek="mon"
-                                selectorButtonPlacement="end"
-                                label="Production Period"
-                                labelPlacement="outside"
-                                defaultValue={{
-                                    start: today(getLocalTimeZone()).subtract({months: 1}),
-                                    end: today(getLocalTimeZone()),
-                                }}
-                                onChange={handleDateRangeChange}
-                                minValue={minDate}
-                                maxValue={maxDate}
-                                variant="bordered"
-                                classNames={{
-                                    input: "bg-white"
-                                }}
-                                startContent={<Calendar className="text-default-500" size={20}/>}
-                            />
+                                <DateRangePicker
+                                    //isRequired
+                                    visibleMonths={2}
+                                    firstDayOfWeek="mon"
+                                    selectorButtonPlacement="end"
+                                    label="Production Period"
+                                    labelPlacement="outside"
+                                    defaultValue={{
+                                        start: today(getLocalTimeZone()).subtract({months: 1}),
+                                        end: today(getLocalTimeZone()),
+                                    }}
+                                    onChange={handleDateRangeChange}
+                                    minValue={minDate}
+                                    maxValue={maxDate}
+                                    variant="bordered"
+                                    classNames={{
+                                        input: "bg-white"
+                                    }}
+                                    startContent={<Calendar className="text-default-500" size={20}/>}
+                                />
 
-                            <Input
-                                endContent={
-                                    <div className="flex items-center">
-                                        <label className="sr-only" htmlFor="unit">
-                                            Unit
-                                        </label>
-                                        <select
-                                            className="outline-none border-0 bg-transparent text-default-400 text-small"
-                                            id="unit"
-                                            name="unit"
-                                            value={formValues.unit}
-                                            onChange={handleUnitChange}
-                                        >
-                                            <option>kg</option>
-                                            <option>lb</option>
-                                            <option>oz</option>
-                                        </select>
-                                    </div>
-                                }
-                                isRequired
-                                //type="number"
-                                label="Quantity"
-                                labelPlacement="outside"
-                                name="quantity"
-                                placeholder="Enter the material's quantity"
-                                value={formValues.quantity}
-                                onChange={handleInputChange}
-                                variant="bordered"
-                                classNames={{
-                                    input: "bg-white"
-                                }}
-                                maxLength={50}
-                            />
+                            </div>
+                            
+                            <div className="flex w-full gap-6">
+                                <Input
+                                    isRequired
+                                    label="Type of material"
+                                    labelPlacement="outside"
+                                    name="typeOfMaterial"
+                                    placeholder="Enter the material"
+                                    value={formValues.typeOfMaterial}
+                                    onChange={handleInputChange}
+                                    variant="bordered"
+                                    classNames={{
+                                        input: "bg-white"
+                                    }}
+                                    maxLength={50}
+                                />
+                                <Input
+                                    //isRequired
+                                    label="Quality"
+                                    labelPlacement="outside"
+                                    name="quality"
+                                    placeholder="Enter the quality"
+                                    value={formValues.quality}
+                                    onChange={handleInputChange}
+                                    variant="bordered"
+                                    classNames={{
+                                        input: "bg-white"
+                                    }}
+                                    maxLength={50}
+                                />
 
-                            <Autocomplete
-                                isRequired
-                                //isVirtualized
-                                labelPlacement="outside"
-                                label="Company"
-                                placeholder="Select a company"
-                                classNames={{
-                                    base: "max-w-full",
-                                    listbox: "bg-white",
-                                    popoverContent: "border border-default-200 bg-white"
-                                }}
-                                variant="bordered"
-                                defaultSelectedKey={companies[1].key}
-                                defaultItems={companies}
-                                onSelectionChange={(key: React.Key | null) => handleCompanyChange(key?.toString() || '')}
-                            >
-                                {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
-                            </Autocomplete>
+                                <Input
+                                    endContent={
+                                        <div className="flex items-center">
+                                            <label className="sr-only" htmlFor="unit">
+                                                Unit
+                                            </label>
+                                            <select
+                                                className="outline-none border-0 bg-transparent text-default-400 text-small"
+                                                id="unit"
+                                                name="unit"
+                                                value={formValues.unit}
+                                                onChange={handleUnitChange}
+                                            >
+                                                <option>kg</option>
+                                                <option>lb</option>
+                                                <option>oz</option>
+                                            </select>
+                                        </div>
+                                    }
+                                    isRequired
+                                    //type="number"
+                                    label="Quantity"
+                                    labelPlacement="outside"
+                                    name="quantity"
+                                    placeholder="Enter the material's quantity"
+                                    value={formValues.quantity}
+                                    onChange={handleInputChange}
+                                    variant="bordered"
+                                    classNames={{
+                                        input: "bg-white"
+                                    }}
+                                    maxLength={50}
+                                />
+                            </div>
 
-                            <Input
-                                isRequired
-                                label="Mine"
-                                labelPlacement="outside"
-                                name="mine"
-                                placeholder="Enter mine name"
-                                value={formValues.mine}
-                                onChange={handleInputChange}
-                                variant="bordered"
-                                classNames={{
-                                    input: "bg-white"
-                                }}
-                                maxLength={50}
-                            />
 
                             <Textarea
                                 //isRequired
