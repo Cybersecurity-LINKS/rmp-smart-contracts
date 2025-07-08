@@ -531,7 +531,7 @@ function HomePage() {
                                 </Autocomplete>
 
                                 <Input
-                                    isRequired
+                                    isRequired //todo red color the field if not set and needed
                                     label="Mine"
                                     labelPlacement="outside"
                                     name="mine"
@@ -548,7 +548,7 @@ function HomePage() {
 
                             <div className="flex w-full gap-6">
                                 <DateInput
-                                    isRequired
+                                    isRequired //todo red color the field if not set and needed
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
@@ -587,7 +587,7 @@ function HomePage() {
                             
                             <div className="flex w-full gap-6">
                                 <Input
-                                    isRequired
+                                    isRequired //todo red color the field if not set and needed
                                     label="Type of material"
                                     labelPlacement="outside"
                                     name="typeOfMaterial"
@@ -625,7 +625,7 @@ function HomePage() {
                                                 className="outline-none border-0 bg-transparent text-default-400 text-small"
                                                 id="unit"
                                                 name="unit"
-                                                value={formValues.unit}
+                                                value={formValues.unit} //todo set a default value
                                                 onChange={handleUnitChange}
                                             >
                                                 <option>kg</option>
