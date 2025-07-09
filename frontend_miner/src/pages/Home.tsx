@@ -211,7 +211,6 @@ function HomePage() {
             !!sanitizedTypeOfMaterial &&
             !!formValues.company &&
             !!formValues.creationDate &&
-            !!formValues.productionPeriod &&
             isValidPassportID(formValues.passportId) &&
             isValidName(sanitizedTypeOfMaterial) &&
             formValues.passportId.length <= 10 &&
@@ -243,7 +242,7 @@ function HomePage() {
         productionPeriod: '2024-03-01 - 2024-03-31',
         quantity: '224.92',
         unit: 'oz',
-        company: companies[0].label,
+        company: companies[1].label,
         mine: 'DigiMine',
         info: 'Ore Mined 1248 tons, Platinum Content 6.47 g/t, Downtime 0.64 hours, Labor Availability 94.07%, Recovery Rate 86.63%, Waste Rock 316.41 tons',
         note: 'SAMPLE data (not real production data), for TEST purposes only',
@@ -365,7 +364,7 @@ function HomePage() {
                 quality: '',
                 productionPeriod: '',
                 quantity: '',
-                unit: '',
+                unit: 'kg',
                 company: '',
                 mine: '',
                 info: '',
@@ -523,7 +522,7 @@ function HomePage() {
                                         popoverContent: "border border-default-200 bg-white"
                                     }}
                                     variant="bordered"
-                                    defaultSelectedKey={companies[1].key}
+                                    selectedKey={companies.find(c => c.label === formValues.company)?.key || ''}
                                     defaultItems={companies}
                                     onSelectionChange={(key: React.Key | null) => handleCompanyChange(key?.toString() || '')}
                                 >
@@ -531,7 +530,7 @@ function HomePage() {
                                 </Autocomplete>
 
                                 <Input
-                                    isRequired
+                                    isRequired //todo red color the field if not set and needed
                                     label="Mine"
                                     labelPlacement="outside"
                                     name="mine"
@@ -548,7 +547,7 @@ function HomePage() {
 
                             <div className="flex w-full gap-6">
                                 <DateInput
-                                    isRequired
+                                    isRequired //todo red color the field if not set and needed
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
@@ -569,10 +568,10 @@ function HomePage() {
                                     selectorButtonPlacement="end"
                                     label="Production Period"
                                     labelPlacement="outside"
-                                    defaultValue={{
-                                        start: today(getLocalTimeZone()).subtract({months: 1}),
-                                        end: today(getLocalTimeZone()),
-                                    }}
+                                    value={formValues.productionPeriod ? {
+                                        start: new CalendarDate(...formValues.productionPeriod.split(' - ')[0].split('-').map(Number)),
+                                        end: new CalendarDate(...formValues.productionPeriod.split(' - ')[1].split('-').map(Number))
+                                    } : null}
                                     onChange={handleDateRangeChange}
                                     minValue={minDate}
                                     maxValue={maxDate}
@@ -587,7 +586,7 @@ function HomePage() {
                             
                             <div className="flex w-full gap-6">
                                 <Input
-                                    isRequired
+                                    isRequired //todo red color the field if not set and needed
                                     label="Type of material"
                                     labelPlacement="outside"
                                     name="typeOfMaterial"
@@ -625,8 +624,9 @@ function HomePage() {
                                                 className="outline-none border-0 bg-transparent text-default-400 text-small"
                                                 id="unit"
                                                 name="unit"
-                                                value={formValues.unit}
+                                                //todo set a default value
                                                 onChange={handleUnitChange}
+                                                defaultValue="kg"
                                             >
                                                 <option>kg</option>
                                                 <option>lb</option>
