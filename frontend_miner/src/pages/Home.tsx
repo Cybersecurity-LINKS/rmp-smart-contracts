@@ -530,7 +530,7 @@ function HomePage() {
                                 </Autocomplete>
 
                                 <Input
-                                    isRequired //todo red color the field if not set and needed
+                                    isRequired
                                     label="Mine"
                                     labelPlacement="outside"
                                     name="mine"
@@ -547,7 +547,7 @@ function HomePage() {
 
                             <div className="flex w-full gap-6">
                                 <DateInput
-                                    isRequired //todo red color the field if not set and needed
+                                    isRequired
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
@@ -586,7 +586,7 @@ function HomePage() {
                             
                             <div className="flex w-full gap-6">
                                 <Input
-                                    isRequired //todo red color the field if not set and needed
+                                    isRequired
                                     label="Type of material"
                                     labelPlacement="outside"
                                     name="typeOfMaterial"
@@ -624,7 +624,6 @@ function HomePage() {
                                                 className="outline-none border-0 bg-transparent text-default-400 text-small"
                                                 id="unit"
                                                 name="unit"
-                                                //todo set a default value
                                                 onChange={handleUnitChange}
                                                 defaultValue="kg"
                                             >
