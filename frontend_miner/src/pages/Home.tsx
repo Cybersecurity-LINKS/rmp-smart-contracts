@@ -331,32 +331,38 @@ function HomePage() {
         setIsSubmitting(true);
 
         try {
-            const sanitizedPassportId = sanitizeInput(formValues.passportId);
-            const sanitizedTypeOfMaterial = sanitizeInput(formValues.typeOfMaterial);
-            const sanitazedQuality = sanitizeInput(formValues.quality);
-            const sanitizedQuantity = sanitizeInput(formValues.quantity);
-            const sanitizedUnit = sanitizeInput(formValues.unit);
-            const sanitazedCompany = sanitizeInput(formValues.company);
-            const sanitizedMine = sanitizeInput(formValues.mine);
-            const sanitizedInfo = sanitizeInput(formValues.info);
-            const sanitizedNote = sanitizeInput(formValues.note);
+            // Create a temporary object to store only non-empty fields
+            const formData: { [key: string]: string | boolean } = {};
 
-            await creteJSONfile({
-                passportId: sanitizedPassportId,
-                creationDate: formValues.creationDate,
-                typeOfMaterial: sanitizedTypeOfMaterial,
-                quality: sanitazedQuality,
-                productionPeriod: formValues.productionPeriod,
-                quantity: sanitizedQuantity,
-                unit: sanitizedUnit,
-                company: sanitazedCompany,
-                mine: sanitizedMine,
-                info: sanitizedInfo,
-                note: sanitizedNote,
-                disclaimerAccepted: true,
-            }, setFeedback);
+            // List of fields to check
+            const fields = [
+                {key: 'passportId', value: sanitizeInput(formValues.passportId)},
+                {key: 'creationDate', value: formValues.creationDate},
+                {key: 'typeOfMaterial', value: sanitizeInput(formValues.typeOfMaterial)},
+                {key: 'quality', value: sanitizeInput(formValues.quality)},
+                {key: 'productionPeriod', value: formValues.productionPeriod},
+                {key: 'quantity', value: sanitizeInput(formValues.quantity)},
+                {key: 'unit', value: sanitizeInput(formValues.unit)},
+                {key: 'company', value: sanitizeInput(formValues.company)},
+                {key: 'mine', value: sanitizeInput(formValues.mine)},
+                {key: 'info', value: sanitizeInput(formValues.info)},
+                {key: 'note', value: sanitizeInput(formValues.note)}
+            ];
 
-            // in case of success, reset form
+            // Add only the non-empty fields to the formData object
+            fields.forEach(({key, value}) => {
+                if (value && value.trim() !== '') {
+                    formData[key] = value;
+                }
+            });
+
+            // Always add disclaimerAccepted
+            formData.disclaimerAccepted = true;
+
+            // Call creteJSONfile with the filtered data
+            await creteJSONfile(formData as any, setFeedback);
+
+            // Reset del form come prima
             setFormValues({
                 passportId: '',
                 creationDate: today(getLocalTimeZone()).toString(),
