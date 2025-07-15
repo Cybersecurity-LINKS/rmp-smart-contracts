@@ -74,18 +74,18 @@ function HomePage() {
     const [jsonString, setJsonString] = useState<string>('');
 
     async function creteJSONfile(param: {
-        passportId: string;
-        creationDate: string;
-        typeOfMaterial: string;
-        quality: string;
-        productionPeriod: string;
-        quantity: string;
-        unit: string;
-        company: string;
-        mine: string;
-        info: string;
-        note: string;
-        disclaimerAccepted: boolean
+        '01_passportId': string;
+        '02_creationDate': string;
+        '03_typeOfMaterial': string;
+        '04_quality': string;
+        '05_productionPeriod': string;
+        '06_quantity': string;
+        '07_unit': string;
+        '08_company': string;
+        '09_mine': string;
+        '10_info': string;
+        '11_note': string;
+        '12_disclaimerAccepted': boolean
     }, setFeedback: (feedback: FeedbackState) => void) {
 
         let jsonString = "";
@@ -116,10 +116,10 @@ function HomePage() {
         if (address) {
             const json = JSON.parse(jsonString);
             const dataToDownload = {
-                Name: json.typeOfMaterial + '-' + json.passportId,
+                Name: json["03_typeOfMaterial"] + '-' + json['01_passportId'],
                 nftAddress: address.nftAddress,
                 dtAddress: address.dtAddress,
-                DTquantity: json.quantity,
+                DTquantity: json['06_quantity'],
             };
 
             // Create blob with JSON data
@@ -131,7 +131,7 @@ function HomePage() {
             // Create a temporary <a> element for the download
             const link = document.createElement('a');
             link.href = url;
-            link.download = json.typeOfMaterial + '-' + json.passportId + '.json';
+            link.download = json["03_typeOfMaterial"] + '-' + json['01_passportId'] + '.json';
 
             // Simulates clicking on the link to start the download
             document.body.appendChild(link);
@@ -204,16 +204,16 @@ function HomePage() {
     // Control value to lock/unlock Mint button
     const isFormValid = (): boolean => {
         //const sanitizedPassportId = sanitizeInput(formValues.passportId);
-        const sanitizedTypeOfMaterial = sanitizeInput(formValues.typeOfMaterial);
+        const sanitizedTypeOfMaterial = sanitizeInput(formValues["03_typeOfMaterial"]);
 
         return (
             //!!sanitizedPassportId &&
             !!sanitizedTypeOfMaterial &&
-            !!formValues.company &&
-            !!formValues.creationDate &&
-            isValidPassportID(formValues.passportId) &&
+            !!formValues["08_company"] &&
+            !!formValues["02_creationDate"] &&
+            isValidPassportID(formValues["01_passportId"]) &&
             isValidName(sanitizedTypeOfMaterial) &&
-            formValues.passportId.length <= 10 &&
+            formValues["01_passportId"].length <= 10 &&
             sanitizedTypeOfMaterial.length <= 10 &&
             formValues.disclaimerAccepted
         );
@@ -235,18 +235,18 @@ function HomePage() {
 
     //Form state
     const [formValues, setFormValues] = useState({
-        passportId: '789273311',
-        creationDate: maxDate.toString(),
-        typeOfMaterial: 'Platinum',
-        quality: 'Raw',
-        productionPeriod: '2024-03-01 - 2024-03-31',
-        quantity: '224.92',
-        unit: 'oz',
-        company: companies[1].label,
-        mine: 'DigiMine',
-        info: 'Ore Mined 1248 tons, Platinum Content 6.47 g/t, Downtime 0.64 hours, Labor Availability 94.07%, Recovery Rate 86.63%, Waste Rock 316.41 tons',
-        note: 'SAMPLE data (not real production data), for TEST purposes only',
-        disclaimerAccepted: true
+        '01_passportId': '789273311',
+        '02_creationDate': maxDate.toString(),
+        '03_typeOfMaterial': 'Platinum',
+        '04_quality': 'Raw',
+        '05_productionPeriod': '2024-03-01 - 2024-03-31',
+        '06_quantity': '224.92',
+        '07_unit': 'oz',
+        '08_company': companies[1].label,
+        '09_mine': 'DigiMine',
+        '10_info': 'Ore Mined 1248 tons, Platinum Content 6.47 g/t, Downtime 0.64 hours, Labor Availability 94.07%, Recovery Rate 86.63%, Waste Rock 316.41 tons',
+        '11_note': 'SAMPLE data (not real production data), for TEST purposes only',
+        '12_disclaimerAccepted': true
     });
 
     useEffect(() => {
@@ -258,7 +258,7 @@ function HomePage() {
     const handleCompanyChange = (value: string) => {
         setFormValues(prev => ({
             ...prev,
-            company: companies.find(company => company.key === value)?.label || ''
+            '08_company': companies.find(company => company.key === value)?.label || ''
         }));
     };
 
@@ -269,19 +269,19 @@ function HomePage() {
             // Convert the DateValue to a string in YYYY-MM-DD format
             const dateString = date.toString();
             console.log('String ' + dateString);
-            console.log('form before ' + formValues.creationDate);
+            console.log('form before ' + formValues["02_creationDate"]);
             setFormValues(prev => ({
                 ...prev,
-                creationDate: dateString
+                '02_creationDate': dateString
             }));
         } else {
             // If the date is null or invalid, we assign a void string (for button control reasons)
             setFormValues(prev => ({
                 ...prev,
-                creationDate: ''
+                '02_creationDate': ''
             }));
         }
-        console.log('form after ' + formValues.creationDate);
+        console.log('form after ' + formValues["02_creationDate"]);
     };
 
     //Wrapper for Date change
@@ -293,13 +293,13 @@ function HomePage() {
             console.log(periodString);
             setFormValues(prev => ({
                 ...prev,
-                productionPeriod: periodString
+                '05_productionPeriod': periodString
             }));
         } else {
             // If the date is null or invalid, we assign a void string (for button control reasons)
             setFormValues(prev => ({
                 ...prev,
-                productionPeriod: ''
+                '05_productionPeriod': ''
             }));
         }
     };
@@ -310,9 +310,9 @@ function HomePage() {
         console.log(name, value, typeof value);
         // Remove non allowed chars
         let sanitizedValue = '';
-        if (name == "passportId") {
+        if (name == "01_passportId") {
             sanitizedValue = sanitizeID(value)
-        } else if (name == "quantity") {
+        } else if (name == "06_quantity") {
             sanitizedValue = sanitizeQuantity(value)
         } else {
             sanitizedValue = value.replace(/[^A-Za-zÀ-ÿ\s'-]/g, '');
@@ -331,44 +331,50 @@ function HomePage() {
         setIsSubmitting(true);
 
         try {
-            const sanitizedPassportId = sanitizeInput(formValues.passportId);
-            const sanitizedTypeOfMaterial = sanitizeInput(formValues.typeOfMaterial);
-            const sanitazedQuality = sanitizeInput(formValues.quality);
-            const sanitizedQuantity = sanitizeInput(formValues.quantity);
-            const sanitizedUnit = sanitizeInput(formValues.unit);
-            const sanitazedCompany = sanitizeInput(formValues.company);
-            const sanitizedMine = sanitizeInput(formValues.mine);
-            const sanitizedInfo = sanitizeInput(formValues.info);
-            const sanitizedNote = sanitizeInput(formValues.note);
+            // Create a temporary object to store only non-empty fields
+            const formData: { [key: string]: string | boolean } = {};
 
-            await creteJSONfile({
-                passportId: sanitizedPassportId,
-                creationDate: formValues.creationDate,
-                typeOfMaterial: sanitizedTypeOfMaterial,
-                quality: sanitazedQuality,
-                productionPeriod: formValues.productionPeriod,
-                quantity: sanitizedQuantity,
-                unit: sanitizedUnit,
-                company: sanitazedCompany,
-                mine: sanitizedMine,
-                info: sanitizedInfo,
-                note: sanitizedNote,
-                disclaimerAccepted: true,
-            }, setFeedback);
+            // List of fields to check
+            const fields = [
+                {key: '01_passportId', value: sanitizeInput(formValues["01_passportId"])},
+                {key: '02_creationDate', value: formValues["02_creationDate"]},
+                {key: '03_typeOfMaterial', value: sanitizeInput(formValues["03_typeOfMaterial"])},
+                {key: '04_quality', value: sanitizeInput(formValues["04_quality"])},
+                {key: '05_productionPeriod', value: formValues["05_productionPeriod"]},
+                {key: '06_quantity', value: sanitizeInput(formValues["06_quantity"])},
+                {key: '07_unit', value: sanitizeInput(formValues["07_unit"])},
+                {key: '08_company', value: sanitizeInput(formValues["08_company"])},
+                {key: '09_mine', value: sanitizeInput(formValues["09_mine"])},
+                {key: '10_info', value: sanitizeInput(formValues["10_info"])},
+                {key: '11_note', value: sanitizeInput(formValues["11_note"])}
+            ];
 
-            // in case of success, reset form
+            // Add only the non-empty fields to the formData object
+            fields.forEach(({key, value}) => {
+                if (value && value.trim() !== '') {
+                    formData[key] = value;
+                }
+            });
+
+            // Always add disclaimerAccepted
+            formData.disclaimerAccepted = true;
+
+            // Call creteJSONfile with the filtered data
+            await creteJSONfile(formData as any, setFeedback);
+
+            // Reset del form come prima
             setFormValues({
-                passportId: '',
-                creationDate: today(getLocalTimeZone()).toString(),
-                typeOfMaterial: '',
-                quality: '',
-                productionPeriod: '',
-                quantity: '',
-                unit: 'kg',
-                company: '',
-                mine: '',
-                info: '',
-                note: '',
+                '01_passportId': '',
+                '02_creationDate': today(getLocalTimeZone()).toString(),
+                '03_typeOfMaterial': '',
+                '04_quality': '',
+                '05_productionPeriod': '',
+                '06_quantity': '',
+                '07_unit': 'kg',
+                '08_company': '',
+                '09_mine': '',
+                '10_info': '',
+                '11_note': '',
                 disclaimerAccepted: false
             });
         } catch (error) {
@@ -383,7 +389,7 @@ function HomePage() {
         console.log(value);
         setFormValues(prev => ({
             ...prev,
-            unit: value
+            '07_unit': value
         }));
     };
 
@@ -498,9 +504,9 @@ function HomePage() {
                                 isRequired
                                 label="Passport Id"
                                 labelPlacement="outside"
-                                name="passportId"
+                                name="01_passportId"
                                 placeholder="Enter the passport id"
-                                value={formValues.passportId}
+                                value={formValues["01_passportId"]}
                                 onChange={handleInputChange}
                                 variant="bordered"
                                 classNames={{
@@ -522,7 +528,7 @@ function HomePage() {
                                         popoverContent: "border border-default-200 bg-white"
                                     }}
                                     variant="bordered"
-                                    selectedKey={companies.find(c => c.label === formValues.company)?.key || ''}
+                                    selectedKey={companies.find(c => c.label === formValues["08_company"])?.key || ''}
                                     defaultItems={companies}
                                     onSelectionChange={(key: React.Key | null) => handleCompanyChange(key?.toString() || '')}
                                 >
@@ -533,9 +539,9 @@ function HomePage() {
                                     isRequired
                                     label="Mine"
                                     labelPlacement="outside"
-                                    name="mine"
+                                    name="09_mine"
                                     placeholder="Enter mine name"
-                                    value={formValues.mine}
+                                    value={formValues["09_mine"]}
                                     onChange={handleInputChange}
                                     variant="bordered"
                                     classNames={{
@@ -568,9 +574,9 @@ function HomePage() {
                                     selectorButtonPlacement="end"
                                     label="Production Period"
                                     labelPlacement="outside"
-                                    value={formValues.productionPeriod ? {
-                                        start: new CalendarDate(...formValues.productionPeriod.split(' - ')[0].split('-').map(Number)),
-                                        end: new CalendarDate(...formValues.productionPeriod.split(' - ')[1].split('-').map(Number))
+                                    value={formValues["05_productionPeriod"] ? {
+                                        start: new CalendarDate(...formValues["05_productionPeriod"].split(' - ')[0].split('-').map(Number)),
+                                        end: new CalendarDate(...formValues["05_productionPeriod"].split(' - ')[1].split('-').map(Number))
                                     } : null}
                                     onChange={handleDateRangeChange}
                                     minValue={minDate}
@@ -589,9 +595,9 @@ function HomePage() {
                                     isRequired
                                     label="Type of material"
                                     labelPlacement="outside"
-                                    name="typeOfMaterial"
+                                    name="03_typeOfMaterial"
                                     placeholder="Enter the material"
-                                    value={formValues.typeOfMaterial}
+                                    value={formValues["03_typeOfMaterial"]}
                                     onChange={handleInputChange}
                                     variant="bordered"
                                     classNames={{
@@ -603,9 +609,9 @@ function HomePage() {
                                     //isRequired
                                     label="Quality"
                                     labelPlacement="outside"
-                                    name="quality"
+                                    name="04_quality"
                                     placeholder="Enter the quality"
-                                    value={formValues.quality}
+                                    value={formValues["04_quality"]}
                                     onChange={handleInputChange}
                                     variant="bordered"
                                     classNames={{
@@ -623,7 +629,7 @@ function HomePage() {
                                             <select
                                                 className="outline-none border-0 bg-transparent text-default-400 text-small"
                                                 id="unit"
-                                                name="unit"
+                                                name="07_unit"
                                                 onChange={handleUnitChange}
                                                 defaultValue="kg"
                                             >
@@ -637,9 +643,9 @@ function HomePage() {
                                     //type="number"
                                     label="Quantity"
                                     labelPlacement="outside"
-                                    name="quantity"
+                                    name="06_quantity"
                                     placeholder="Enter the material's quantity"
-                                    value={formValues.quantity}
+                                    value={formValues["06_quantity"]}
                                     onChange={handleInputChange}
                                     variant="bordered"
                                     classNames={{
@@ -654,9 +660,9 @@ function HomePage() {
                                 //isRequired
                                 label="Info"
                                 labelPlacement="outside"
-                                name="info"
+                                name="10_info"
                                 placeholder="Enter some additional information"
-                                value={formValues.info}
+                                value={formValues["10_info"]}
                                 onChange={handleInputChange}
                                 variant="bordered"
                                 classNames={{
@@ -669,9 +675,9 @@ function HomePage() {
                                 //isRequired
                                 label="NOTE"
                                 labelPlacement="outside"
-                                name="note"
+                                name="11_note"
                                 placeholder="Enter some notes"
-                                value={formValues.note}
+                                value={formValues["11_note"]}
                                 onChange={handleInputChange}
                                 variant="bordered"
                                 classNames={{
