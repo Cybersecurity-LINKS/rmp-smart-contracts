@@ -15,21 +15,6 @@ export default defineConfig(() => {
                 }
             ]
         },
-        plugins: [react()],
-        server: {
-            proxy: {
-                '/api': {
-                    target: "http://127.0.0.1:3213",
-                    changeOrigin: false,
-                    secure: false,
-                },
-                '/.well-known': {
-                    target: "http://127.0.0.1:3213",
-                    changeOrigin: false,
-                    secure: false,
-                }
-            },
-            port: 49000
-        },
+        plugins: [react()]
     }
 })

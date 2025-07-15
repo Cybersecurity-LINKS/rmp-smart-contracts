@@ -62,14 +62,14 @@ export const mintNFT = async (passportJSONstring: string) => {
 
 
     const nftTxn = await myNftContract.publishAllinOne({
-        name: passportJSON.typeOfMaterial,
-        symbol: passportJSON.typeOfMaterial + passportJSON.passportId,
+        name: passportJSON["03_typeOfMaterial"],
+        symbol: passportJSON["03_typeOfMaterial"] + passportJSON["01_passportId"],
         tokenURI: JSON.stringify(passportJSON),
         // dt_name: "DT" + tokenUri.type,
         // dt_symbol: "DT" + tokenUri.type + "-" + tokenUri.id,
-        dt_name: passportJSON.typeOfMaterial,
-        dt_symbol: passportJSON.typeOfMaterial + "-" + passportJSON.passportId,
-        maxSupply_: ethers.parseEther(passportJSON.quantity.toString()).toString(),
+        dt_name: passportJSON["03_typeOfMaterial"],
+        dt_symbol: passportJSON["03_typeOfMaterial"] + "-" + passportJSON["01_passportId"],
+        maxSupply_: ethers.parseEther(passportJSON["06_quantity"].toString()).toString(),
     })
     //console.log(nftTxn)
     const rc = await nftTxn.wait()
