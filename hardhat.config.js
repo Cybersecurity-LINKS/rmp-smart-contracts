@@ -35,8 +35,8 @@ module.exports = {
     },
     networks: {
         'iota-evm-testnet': {
-            url: 'https://json-rpc.evm.testnet.iotaledger.net',
-            chainId: 1075,
+            url: 'https://json-rpc.evm.testnet.iota.cafe',
+            chainId: 1076,
             gas: 2100000,
             gasPrice: 11_500_000_000,
             accounts: [process.env.PRIVATE_KEY],
@@ -68,10 +68,10 @@ module.exports = {
         customChains: [
             {
                 network: 'iota-evm-testnet',
-                chainId: 1075,
+                chainId: 1076,
                 urls: {
-                    apiURL: 'https://explorer.evm.testnet.iotaledger.net//api',
-                    browserURL: 'https://explorer.evm.testnet.iotaledger.net//'
+                    apiURL: "https://explorer.evm.testnet.iota.cafe/api",
+                    browserURL: "https://explorer.evm.testnet.iota.cafe"
                 }
             }
         ]
