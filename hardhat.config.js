@@ -53,7 +53,7 @@ module.exports = {
             chainId: 11155111,
             accounts: [process.env.PRIVATE_KEY]
         },
-        links: {
+        'links': {
             url: 'https://json-rpc.evm.stardust.linksfoundation.com/dtcb-chain',
             chainId: 1074,
             gas: 2100000,
@@ -63,7 +63,8 @@ module.exports = {
     },
     etherscan: {
         apiKey: {
-            'iota-evm-testnet': 'ABCDE12345ABCDE12345ABCDE123456789'
+            'iota-evm-testnet': 'ABCDE12345ABCDE12345ABCDE123456789',
+            'links': 'empty'
         },
         customChains: [
             {
@@ -72,6 +73,12 @@ module.exports = {
                 urls: {
                     apiURL: "https://explorer.evm.testnet.iota.cafe/api",
                     browserURL: "https://explorer.evm.testnet.iota.cafe"
+                },
+                network: 'links',
+                chainId: 1074,
+                urls: {
+                    apiURL: "https://explorer.tangle.stardust.linksfoundation.com/api",
+                    browserURL: "https://explorer.tangle.stardust.linksfoundation.com/"
                 }
             }
         ]
