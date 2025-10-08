@@ -49,7 +49,7 @@ export function sanitizeID(inputString: string) {
 }
 
 /**
- * Check it is a text with only letters
+ * Check it is a text with only letters (included ' and -)
  * @param inputString
  */
 export function sanitizeOnlyLetters(inputString: string) {
@@ -66,6 +66,29 @@ export function sanitizeOnlyLettersAndNumbers(inputString: string) {
         , '');
     return sanitizedValue;
 }
+
+export const sanitizeBasic = (input: string): string => {
+    return input
+        .trim()
+        // Rimuove caratteri di controllo e non stampabili
+        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+        // Rimuove caratteri che potrebbero causare problemi nella serializzazione JSON
+        .replace(/[\u2028\u2029\uFEFF]/g, '')
+        // Rimuove caratteri potenzialmente pericolosi
+        .replace(/[<>]/g, '');
+};
+
+export const sanitizeRichText = (input: string): string => {
+    const sanitized = sanitizeBasic(input)
+        // Permette lettere, numeri, punteggiatura comune e simboli base
+        .replace(/[^\x20-\x7E\xA0-\xFF\s.,!?()[\]{}@#$%^&*+=_-]/g, '')
+        // Rimuove sequenze di spazi multipli
+        .replace(/\s+/g, ' ');
+
+    return sanitized.slice(0, 500); // Limita la lunghezza
+};
+
+
 
 /**
  * Checks if a passport ID is valid (contains only digits).
