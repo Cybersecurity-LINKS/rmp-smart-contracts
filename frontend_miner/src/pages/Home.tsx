@@ -242,8 +242,8 @@ function HomePage() {
         '05_productionPeriod': '2024-03-01 - 2024-03-31',
         '06_quantity': '224.92',
         '07_unit': 'oz',
-        '08_company': companies[1].label,
-        '09_mine': 'DigiMine',
+        '08_company': companies[0].label,
+        '09_mine': 'LINKS Mine',
         '10_info': 'Ore Mined 1248 tons, Platinum Content 6.47 g/t, Downtime 0.64 hours, Labor Availability 94.07%, Recovery Rate 86.63%, Waste Rock 316.41 tons',
         '11_note': 'SAMPLE data (not real production data), for TEST purposes only',
         '12_disclaimerAccepted': true
@@ -644,7 +644,7 @@ function HomePage() {
                                     label="Quantity"
                                     labelPlacement="outside"
                                     name="06_quantity"
-                                    placeholder="Enter the material's quantity"
+                                    placeholder="Enter the quantity"
                                     value={formValues["06_quantity"]}
                                     onChange={handleInputChange}
                                     variant="bordered"
