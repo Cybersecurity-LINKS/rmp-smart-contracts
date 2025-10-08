@@ -29,7 +29,9 @@ import {
     sanitizeQuantity,
     sanitizeID,
     sanitizeOnlyLettersAndNumbers,
-    sanitizeOnlyLetters, sanitizeBasic, sanitizeRichText, sanitizeOnlyLettersAndSymbols
+    sanitizeOnlyLetters,
+    sanitizeBasic,
+    sanitizeRichText
 } from '../utils/validation';
 
 // Define feedback states
@@ -321,7 +323,7 @@ function HomePage() {
         } else if (name == "04_quality") {
             sanitizedValue = sanitizeOnlyLettersAndNumbers(value);
         } else if (name == "09_mine") {
-            sanitizedValue = sanitizeOnlyLettersAndSymbols(value);
+            sanitizedValue = sanitizeOnlyLetters(value);
         } else if (name == "10_info" || name == "11_note") {
             sanitizedValue = sanitizeRichText(value);
         } else {
