@@ -49,6 +49,25 @@ export function sanitizeID(inputString: string) {
 }
 
 /**
+ * Check it is a text with only letters
+ * @param inputString
+ */
+export function sanitizeOnlyLetters(inputString: string) {
+    const sanitizedValue = inputString.replace(/[^A-Za-zÀ-ÿ\s'-]/g, '');
+    return sanitizedValue;
+}
+
+/**
+ * Check it is a text with letters and numbers
+ * @param inputString
+ */
+export function sanitizeOnlyLettersAndNumbers(inputString: string) {
+    const sanitizedValue = inputString.replace(/[^A-Za-z0-9À-ÿ\s]/g
+        , '');
+    return sanitizedValue;
+}
+
+/**
  * Checks if a passport ID is valid (contains only digits).
  * @param passportID The passport ID string to validate.
  * @returns True if the passport ID is valid, false otherwise.

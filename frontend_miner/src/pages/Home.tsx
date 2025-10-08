@@ -27,7 +27,9 @@ import {
     isValidName,
     isValidPassportID,
     sanitizeQuantity,
-    sanitizeID
+    sanitizeID,
+    sanitizeOnlyLettersAndNumbers,
+    sanitizeOnlyLetters
 } from '../utils/validation';
 
 // Define feedback states
@@ -314,8 +316,14 @@ function HomePage() {
             sanitizedValue = sanitizeID(value)
         } else if (name == "06_quantity") {
             sanitizedValue = sanitizeQuantity(value)
+        } else if (name == "03_typeOfMaterial") {
+            sanitizedValue = sanitizeOnlyLettersAndNumbers(value)
+        }  else if (name == "04_quality") {
+            sanitizedValue = sanitizeOnlyLettersAndNumbers(value);
+        } else if (name == "09_mine") {
+            sanitizedValue = sanitizeOnlyLetters(value);
         } else {
-            sanitizedValue = value.replace(/[^A-Za-zÀ-ÿ\s'-]/g, '');
+            sanitizedValue = value;
         }
 
         setFormValues(prev => ({
