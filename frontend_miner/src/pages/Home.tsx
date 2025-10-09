@@ -244,7 +244,7 @@ function HomePage() {
         '03_typeOfMaterial': 'Platinum',
         '04_quality': 'Raw',
         '05_productionPeriod': '2024-03-01 - 2024-03-31',
-        '06_quantity': '224.92',
+        '06_quantity': '224',
         '07_unit': 'oz',
         '08_company': companies[0].label,
         '09_mine': 'LINKS Mine',
