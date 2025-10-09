@@ -18,7 +18,7 @@ import {
 } from "@heroui/react";
 import {useState, useEffect, useRef} from 'react';
 import {Calendar, Copy} from 'lucide-react';
-import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, parseDate, today} from '@internationalized/date';
 
 import {mintNFT} from "../scripts/deploy_nft.ts";
 
@@ -569,7 +569,7 @@ function HomePage() {
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
-                                    defaultValue={today(getLocalTimeZone())} //today(getLocalTimeZone())
+                                    value={formValues["02_creationDate"] ? parseDate(formValues["02_creationDate"]) : null} //today(getLocalTimeZone())
                                     minValue={minDate}
                                     maxValue={maxDate}
                                     variant="bordered"
