@@ -32,7 +32,7 @@ import {
 } from "@heroui/react";
 import {useState, useEffect, useRef} from 'react';
 import {Calendar, Copy} from 'lucide-react';
-import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, parseDate, today} from '@internationalized/date';
 
 import {mintNFT} from "../scripts/deploy_nft.ts";
 
@@ -41,7 +41,11 @@ import {
     isValidName,
     isValidPassportID,
     sanitizeQuantity,
-    sanitizeID
+    sanitizeID,
+    sanitizeOnlyLettersAndNumbers,
+    sanitizeOnlyLetters,
+    sanitizeBasic,
+    sanitizeRichText
 } from '../utils/validation';
 
 // Define feedback states
@@ -254,10 +258,10 @@ function HomePage() {
         '03_typeOfMaterial': 'Platinum',
         '04_quality': 'Raw',
         '05_productionPeriod': '2024-03-01 - 2024-03-31',
-        '06_quantity': '224.92',
-        '07_unit': 'oz',
-        '08_company': companies[1].label,
-        '09_mine': 'DigiMine',
+        '06_quantity': '224',
+        '07_unit': 'kg',
+        '08_company': companies[0].label,
+        '09_mine': 'LINKS Mine',
         '10_info': 'Ore Mined 1248 tons, Platinum Content 6.47 g/t, Downtime 0.64 hours, Labor Availability 94.07%, Recovery Rate 86.63%, Waste Rock 316.41 tons',
         '11_note': 'SAMPLE data (not real production data), for TEST purposes only',
         '12_disclaimerAccepted': true
@@ -322,14 +326,22 @@ function HomePage() {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
         console.log(name, value, typeof value);
-        // Remove non allowed chars
-        let sanitizedValue = '';
+        // Remove non-allowed chars
+        let sanitizedValue = sanitizeBasic(value);
         if (name == "01_passportId") {
             sanitizedValue = sanitizeID(value)
         } else if (name == "06_quantity") {
             sanitizedValue = sanitizeQuantity(value)
+        } else if (name == "03_typeOfMaterial") {
+            sanitizedValue = sanitizeOnlyLettersAndNumbers(value)
+        } else if (name == "04_quality") {
+            sanitizedValue = sanitizeOnlyLettersAndNumbers(value);
+        } else if (name == "09_mine") {
+            sanitizedValue = sanitizeOnlyLetters(value);
+        } else if (name == "10_info" || name == "11_note") {
+            sanitizedValue = sanitizeRichText(value);
         } else {
-            sanitizedValue = value.replace(/[^A-Za-zÀ-ÿ\s'-]/g, '');
+            sanitizedValue = value;
         }
 
         setFormValues(prev => ({
@@ -571,7 +583,7 @@ function HomePage() {
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
-                                    defaultValue={today(getLocalTimeZone())} //today(getLocalTimeZone())
+                                    value={formValues["02_creationDate"] ? parseDate(formValues["02_creationDate"]) : null} //today(getLocalTimeZone())
                                     minValue={minDate}
                                     maxValue={maxDate}
                                     variant="bordered"
@@ -658,7 +670,7 @@ function HomePage() {
                                     label="Quantity"
                                     labelPlacement="outside"
                                     name="06_quantity"
-                                    placeholder="Enter the material's quantity"
+                                    placeholder="Enter the quantity"
                                     value={formValues["06_quantity"]}
                                     onChange={handleInputChange}
                                     variant="bordered"

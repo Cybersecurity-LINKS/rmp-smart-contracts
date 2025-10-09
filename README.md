@@ -6,7 +6,7 @@ as part of the [MASTERMINE](https://www.mastermine-project.eu/) project.
 
 ## Prepare environment
 
-1. Create a .env file and where o save the private key of your wallet.
+1. Create a .env file where to save the private key of your wallet.
    The .env file should look like this:
 
 ```
@@ -22,12 +22,13 @@ ADDRESS_FILE=./addresses/contractAddresses.json
 NETWORK_URL= <RPC URL>
 SC_DIR=<FOLDER PATH>
 ```
+Follow the file `.env.example` as example
 
 2. In the hardhat.config.js specify the various networks to play around with different wallets
 
 ```js
     'iota-evm-testnet': {
-      url: 'https://json-rpc.evm.testnet.iotaledger.net',
+      url: 'https://json-rpc.evm.testnet.iota.cafe',
       chainId: 1075,
       gas: 2100000, 
       gasPrice: 1000000000000,
@@ -75,7 +76,7 @@ $ npx hardhat run --network localhost scripts/deploy.js
 $ npx hardhat --network localhost faucet <eth-address>
 ```
 
-## Deploy the contracts and interact with them
+## Deploy the contracts and interact with them on a real dlt
 
 1. Deploy the contracts
 
@@ -107,13 +108,13 @@ $ node ./scripts/transfer_token.js
 $ node ./scripts/accumulate_token.js
 ```
 
-5. Burn all accumulated datatokens to mint a new NFT
+6. Burn all accumulated datatokens to mint a new NFT
 
 ```sh
 $ node ./scripts/burn_to_mint_nft.js
 ```
 
-## Run a webpage to mint a RMP (NFT + Data Token)
+## Run a webpage to mint a RMP (NFT and Data Token)
 
 ### Requirements
 
