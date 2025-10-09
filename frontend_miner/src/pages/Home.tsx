@@ -245,7 +245,7 @@ function HomePage() {
         '04_quality': 'Raw',
         '05_productionPeriod': '2024-03-01 - 2024-03-31',
         '06_quantity': '224',
-        '07_unit': 'oz',
+        '07_unit': 'kg',
         '08_company': companies[0].label,
         '09_mine': 'LINKS Mine',
         '10_info': 'Ore Mined 1248 tons, Platinum Content 6.47 g/t, Downtime 0.64 hours, Labor Availability 94.07%, Recovery Rate 86.63%, Waste Rock 316.41 tons',
