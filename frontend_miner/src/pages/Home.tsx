@@ -18,7 +18,7 @@ import {
 } from "@heroui/react";
 import {useState, useEffect, useRef} from 'react';
 import {Calendar, Copy} from 'lucide-react';
-import {CalendarDate, getLocalTimeZone, today} from '@internationalized/date';
+import {CalendarDate, getLocalTimeZone, parseDate, today} from '@internationalized/date';
 
 import {mintNFT} from "../scripts/deploy_nft.ts";
 
@@ -27,7 +27,11 @@ import {
     isValidName,
     isValidPassportID,
     sanitizeQuantity,
-    sanitizeID
+    sanitizeID,
+    sanitizeOnlyLettersAndNumbers,
+    sanitizeOnlyLetters,
+    sanitizeBasic,
+    sanitizeRichText
 } from '../utils/validation';
 
 // Define feedback states
@@ -308,14 +312,22 @@ function HomePage() {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
         console.log(name, value, typeof value);
-        // Remove non allowed chars
-        let sanitizedValue = '';
+        // Remove non-allowed chars
+        let sanitizedValue = sanitizeBasic(value);
         if (name == "01_passportId") {
             sanitizedValue = sanitizeID(value)
         } else if (name == "06_quantity") {
             sanitizedValue = sanitizeQuantity(value)
+        } else if (name == "03_typeOfMaterial") {
+            sanitizedValue = sanitizeOnlyLettersAndNumbers(value)
+        } else if (name == "04_quality") {
+            sanitizedValue = sanitizeOnlyLettersAndNumbers(value);
+        } else if (name == "09_mine") {
+            sanitizedValue = sanitizeOnlyLetters(value);
+        } else if (name == "10_info" || name == "11_note") {
+            sanitizedValue = sanitizeRichText(value);
         } else {
-            sanitizedValue = value.replace(/[^A-Za-zÀ-ÿ\s'-]/g, '');
+            sanitizedValue = value;
         }
 
         setFormValues(prev => ({
@@ -557,7 +569,7 @@ function HomePage() {
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
-                                    defaultValue={today(getLocalTimeZone())} //today(getLocalTimeZone())
+                                    value={formValues["02_creationDate"] ? parseDate(formValues["02_creationDate"]) : null} //today(getLocalTimeZone())
                                     minValue={minDate}
                                     maxValue={maxDate}
                                     variant="bordered"
