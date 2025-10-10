@@ -66,36 +66,41 @@ export const companies = [
     {key: "22", label: "Eticas"},
 ];
 
-
 function HomePage() {
-
     interface AddressInfo {
         nftAddress: string;
         dtAddress: string;
     }
 
+    // === Types for JSON payloads ===
+    type NumberedKey =
+        | '01_passportId'
+        | '02_creationDate'
+        | '03_typeOfMaterial'
+        | '04_quality'
+        | '05_productionPeriod'
+        | '06_quantity'
+        | '07_unit'
+        | '08_company'
+        | '09_mine'
+        | '10_info'
+        | '11_note';
+
+    type CreateJSONParam = Record<NumberedKey, string> & {
+        // request: also include this in the JSON
+        disclaimerAccepted?: boolean;
+    };
+
     const [address, setAddress] = useState<AddressInfo | null>(null);
     const [jsonString, setJsonString] = useState<string>('');
 
-    async function creteJSONfile(param: {
-        '01_passportId': string;
-        '02_creationDate': string;
-        '03_typeOfMaterial': string;
-        '04_quality': string;
-        '05_productionPeriod': string;
-        '06_quantity': string;
-        '07_unit': string;
-        '08_company': string;
-        '09_mine': string;
-        '10_info': string;
-        '11_note': string;
-    }, setFeedback: (feedback: FeedbackState) => void) {
-
+    async function createJSONfile(
+        param: Partial<CreateJSONParam>,
+        setFeedback: (feedback: FeedbackState) => void
+    ) {
         let jsonString = "";
-
         try {
             setFeedback({type: 'loading', message: ' Minting... 🪨⛏️', visible: true})
-
             jsonString = JSON.stringify(param, null, 2);
             //console.log(jsonString)
             setJsonString(jsonString)
@@ -124,31 +129,24 @@ function HomePage() {
                 dtAddress: address.dtAddress,
                 DTquantity: json['06_quantity'],
             };
-
             // Create blob with JSON data
             const blob = new Blob([JSON.stringify(dataToDownload, null, 2)], {type: 'application/json'});
-
             // Create an URL for blob
             const url = window.URL.createObjectURL(blob);
-
             // Create a temporary <a> element for the download
             const link = document.createElement('a');
             link.href = url;
             link.download = json["03_typeOfMaterial"] + '-' + json['01_passportId'] + '.json';
-
             // Simulates clicking on the link to start the download
             document.body.appendChild(link);
             link.click();
-
             // Clean up
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-
             // Close the modal
             onClose();
         }
     };
-
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text)
@@ -161,7 +159,6 @@ function HomePage() {
             });
     };
 
-
     // Ref for main container and feedback
     const containerRef = useRef<HTMLDivElement>(null);
     const feedbackRef = useRef<HTMLDivElement>(null);
@@ -172,7 +169,6 @@ function HomePage() {
         message: '',
         visible: false
     });
-
     const [isPulsing, setIsPulsing] = useState(false);
 
     // Automatic scroll
@@ -180,7 +176,6 @@ function HomePage() {
         if (feedback.visible && feedback.type !== null) {
             // Scroll up
             window.scrollTo({top: 0, behavior: 'smooth'});
-
         }
         if (feedback.message && feedback.visible && feedback.type == 'loading') {
             // Pulse animation
@@ -195,14 +190,12 @@ function HomePage() {
             const timer = setTimeout(() => {
                 setFeedback(prev => ({...prev, visible: false}));
             }, 5000); // 5 seconds
-
             return () => clearTimeout(timer);
         }
     }, [feedback.message, feedback.visible, feedback.type]);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
-
 
     // Control value to lock/unlock Mint button
     const isFormValid = (): boolean => {
@@ -261,7 +254,7 @@ function HomePage() {
     const handleCompanyChange = (value: string) => {
         setFormValues(prev => ({
             ...prev,
-            '08_company': companies.find(company => company.key === value)?.label || ''
+            '08_company': companies.find(company => company.key === value)?.label ?? ''
         }));
     };
 
@@ -287,7 +280,7 @@ function HomePage() {
         console.log('form after ' + formValues["02_creationDate"]);
     };
 
-    //Wrapper for Date change
+    //Wrapper for Date range change
     const handleDateRangeChange = (period: RangeValue<DateValue> | null) => {
         if (period) {
             // Convert the DateValue to a string in YYYY-MM-DD format
@@ -342,11 +335,11 @@ function HomePage() {
         setIsSubmitting(true);
 
         try {
-            // Create a temporary object to store only non-empty fields
-            const formData: { [key: string]: string | boolean } = {};
+            // Build a typed payload with strings only
+            const payload: Partial<CreateJSONParam> = {};
 
             // List of fields to check
-            const fields = [
+            const fields: { key: NumberedKey; value: string }[] = [
                 {key: '01_passportId', value: sanitizeInput(formValues["01_passportId"])},
                 {key: '02_creationDate', value: formValues["02_creationDate"]},
                 {key: '03_typeOfMaterial', value: sanitizeInput(formValues["03_typeOfMaterial"])},
@@ -360,18 +353,18 @@ function HomePage() {
                 {key: '11_note', value: sanitizeInput(formValues["11_note"])}
             ];
 
-            // Add only the non-empty fields to the formData object
+            // Add only the non-empty fields to the payload object
             fields.forEach(({key, value}) => {
                 if (value && value.trim() !== '') {
-                    formData[key] = value;
+                    payload[key] = value;
                 }
             });
 
             // Always add disclaimerAccepted
-            formData.disclaimerAccepted = true;
+            payload.disclaimerAccepted = true;
 
-            // Call creteJSONfile with the filtered data
-            await creteJSONfile(formData as any, setFeedback);
+            // Call createJSONfile with the filtered data
+            await createJSONfile(payload, setFeedback);
 
             // Reset del form come prima
             setFormValues({
@@ -480,6 +473,7 @@ function HomePage() {
                                                 </p>
                                             </>
                                         )}
+
                                         <div className="flex items-center justify-center w-full">
                                             <Alert color={"danger"}
                                                    description={"Downloading the file let's you avoid to lose the addresses of the minted items"}
@@ -487,12 +481,9 @@ function HomePage() {
                                         </div>
                                     </ModalBody>
                                     <ModalFooter>
-
                                         <Button color="danger" onPress={onClose}>
                                             Close Anyway
                                         </Button>
-
-
                                         <Button color="primary" variant="bordered" onPress={handleDownload}
                                                 className="bg-primary-600 hover:bg-primary-700 text-white">
                                             Download
@@ -502,7 +493,6 @@ function HomePage() {
                             )}
                         </ModalContent>
                     </Modal>
-
                 </div>
 
                 <Card className="bg-white shadow-lg border border-gray-100">
@@ -539,9 +529,9 @@ function HomePage() {
                                         popoverContent: "border border-default-200 bg-white"
                                     }}
                                     variant="bordered"
-                                    selectedKey={companies.find(c => c.label === formValues["08_company"])?.key || ''}
+                                    selectedKey={companies.find(c => c.label === formValues["08_company"])?.key ?? ''}
                                     defaultItems={companies}
-                                    onSelectionChange={(key: React.Key | null) => handleCompanyChange(key?.toString() || '')}
+                                    onSelectionChange={(key: React.Key | null) => handleCompanyChange(key?.toString() ?? '')}
                                 >
                                     {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
                                 </Autocomplete>
@@ -568,7 +558,7 @@ function HomePage() {
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
-                                    value={formValues["02_creationDate"] ? parseDate(formValues["02_creationDate"]) : null} //today(getLocalTimeZone())
+                                    value={formValues["02_creationDate"] ? parseDate(formValues["02_creationDate"]) : null}
                                     minValue={minDate}
                                     maxValue={maxDate}
                                     variant="bordered"
@@ -598,9 +588,8 @@ function HomePage() {
                                     }}
                                     startContent={<Calendar className="text-default-500" size={20}/>}
                                 />
-
                             </div>
-                            
+
                             <div className="flex w-full gap-6">
                                 <Input
                                     isRequired
@@ -666,7 +655,6 @@ function HomePage() {
                                 />
                             </div>
 
-
                             <Textarea
                                 //isRequired
                                 label="Info"
@@ -696,7 +684,6 @@ function HomePage() {
                                 }}
                                 maxLength={500}
                             />
-
 
                             <div className="px-8 py-4 bg-default-50 rounded-lg border border-default-200">
                                 <div className="flex flex-col gap-4">
@@ -737,5 +724,4 @@ function HomePage() {
         </Layout>
     );
 }
-
 export default HomePage;
