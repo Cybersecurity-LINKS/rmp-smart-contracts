@@ -89,7 +89,6 @@ function HomePage() {
         '09_mine': string;
         '10_info': string;
         '11_note': string;
-        '12_disclaimerAccepted': boolean
     }, setFeedback: (feedback: FeedbackState) => void) {
 
         let jsonString = "";
@@ -250,7 +249,7 @@ function HomePage() {
         '09_mine': 'LINKS Mine',
         '10_info': 'Ore Mined 1248 tons, Platinum Content 6.47 g/t, Downtime 0.64 hours, Labor Availability 94.07%, Recovery Rate 86.63%, Waste Rock 316.41 tons',
         '11_note': 'SAMPLE data (not real production data), for TEST purposes only',
-        '12_disclaimerAccepted': true
+        disclaimerAccepted: false
     });
 
     useEffect(() => {
