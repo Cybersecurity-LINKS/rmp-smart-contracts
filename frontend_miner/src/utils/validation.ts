@@ -75,7 +75,7 @@ export const sanitizeBasic = (input: string): string => {
     return input
         .trim()
         // Removes control and non-printable characters
-        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+        .replace(/[\p{Cc}\u2028\u2029\uFEFF]/gu, '')
         // Removes characters that could cause problems in JSON serialization
         .replace(/[\u2028\u2029\uFEFF]/g, '')
         // Removes potentially dangerous characters

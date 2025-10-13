@@ -4,8 +4,6 @@ const fs =require("fs") ;
 
 
 //currentTime =  performance.now();
-const addresses = JSON.parse(fs.readFileSync(process.env.ADDRESS_FILE)).addresses;
-
 
 const provider = new ethers.getDefaultProvider(process.env.NETWORK_URL);
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY_ACCOUNT2, provider);

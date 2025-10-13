@@ -6,7 +6,7 @@ async function main() {
     const name = "addresses"
     obtainedAddresses[name] = {};
 
-    addresses = obtainedAddresses[name];
+    let addresses = obtainedAddresses[name];
 
     const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with the account:", deployer.address);

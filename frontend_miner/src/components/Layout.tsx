@@ -1,8 +1,9 @@
 import {Navbar, NavbarBrand, Link} from "@heroui/react";
 import {Link as RouterLink} from 'react-router-dom';
+import {ReactNode} from "react";
 
 
-export const Layout = ({children}: { children: React.ReactNode }) => {
+export const Layout = ({children}: { children: ReactNode }) => {
     return (
         <div className="min-h-screen flex flex-col bg-white">
             <MainNavbar/>
