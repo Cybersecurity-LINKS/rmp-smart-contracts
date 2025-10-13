@@ -181,7 +181,7 @@ function HomePage() {
             // Pulse animation
             setIsPulsing(true);
         }
-    }, [feedback.visible, feedback.type]);
+    }, [feedback.visible, feedback.type, feedback.message]);
 
     // Hide feedback after a while
     useEffect(() => {
