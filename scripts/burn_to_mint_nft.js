@@ -57,7 +57,7 @@ const burnToMintNFT = async () => {
     })
     let x = await nftTxn.wait()
     //console.log(x.logs)
-    console.log(`Factory address: https://explorer.evm.testnet.iotaledger.net/address/${addresses.ERC721Factory}`)
+    console.log(`Factory address: ${process.env.EXPLORER_URL}/address/${addresses.ERC721Factory}`)
 
     let strings = await myNftContract.getadebugstring()
     console.log(strings)
