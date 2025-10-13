@@ -450,7 +450,7 @@ function HomePage() {
                                                         isIconOnly
                                                         color="primary"
                                                         variant="light"
-                                                        onClick={() => copyToClipboard(address.nftAddress)}
+                                                        onPress={() => copyToClipboard(address.nftAddress)}
                                                         className="ml-2"
                                                     >
                                                         <Copy size={20}/>
@@ -465,7 +465,7 @@ function HomePage() {
                                                         isIconOnly
                                                         color="primary"
                                                         variant="light"
-                                                        onClick={() => copyToClipboard(address.dtAddress)}
+                                                        onPress={() => copyToClipboard(address.dtAddress)}
                                                         className="ml-2"
                                                     >
                                                         <Copy size={20}/>
