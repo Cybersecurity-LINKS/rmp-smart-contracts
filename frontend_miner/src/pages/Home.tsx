@@ -41,7 +41,7 @@ type FeedbackState = {
     visible: boolean;
 };
 
-export const companies = [
+const companies = [
     {key: "1", label: "LINKS Foundation"},
     //{ key: "2", label: " ITAINNOVA" },
     //{ key: "3", label: "CORE Innovation Centre" },
