@@ -575,10 +575,19 @@ function HomePage() {
                                     selectorButtonPlacement="end"
                                     label="Production Period"
                                     labelPlacement="outside"
-                                    value={formValues["05_productionPeriod"] ? {
-                                        start: new CalendarDate(...formValues["05_productionPeriod"].split(' - ')[0].split('-').map(Number)),
-                                        end: new CalendarDate(...formValues["05_productionPeriod"].split(' - ')[1].split('-').map(Number))
-                                    } : null}
+
+                                    value={
+                                        formValues["05_productionPeriod"]
+                                            ? (() => {
+                                                const [startStr, endStr] = formValues["05_productionPeriod"].split(" - ");
+                                                return {
+                                                    start: parseDate(startStr.trim()),
+                                                    end:   parseDate(endStr.trim()),
+                                                };
+                                            })()
+                                            : null
+                                    }
+
                                     onChange={handleDateRangeChange}
                                     minValue={minDate}
                                     maxValue={maxDate}

@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@heroui/react": "^2.7.5",
-    "@internationalized/date": "3.7.0",
+    "@heroui/react": "^2.8.5",
+    "@internationalized/date": "^3.8.2",
     "autoprefix": "^1.0.1",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
