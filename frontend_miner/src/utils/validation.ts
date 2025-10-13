@@ -1,7 +1,7 @@
 // src/utils/validation.ts
 
 /**
- * Sanitizza l'input rimuovendo caratteri potenzialmente pericolosi
+ * Sanitize the input by removing potentially dangerous characters
  */
 export const sanitizeInput = (input: string): string => {
     return input
@@ -11,7 +11,7 @@ export const sanitizeInput = (input: string): string => {
 };
 
 /**
- * Verifica se il nome è valido
+ * Check if the name is valid
  */
 export const isValidName = (name: string): boolean => {
     const nameRegex = /^[A-Za-zÀ-ÿ\s'-]{2,50}$/;
@@ -47,6 +47,56 @@ export function sanitizeID(inputString: string) {
 
     return numericString;
 }
+
+/**
+ * Check it is a text with only letters (included ' and -)
+ * @param inputString
+ */
+export function sanitizeOnlyLetters(inputString: string) {
+    const sanitizedValue = inputString.replace(/[^A-Za-zÀ-ÿ\s'-]/g, '');
+    return sanitizedValue;
+}
+
+/**
+ * Check it is a text with letters and numbers
+ * @param inputString
+ */
+export function sanitizeOnlyLettersAndNumbers(inputString: string) {
+    const sanitizedValue = inputString.replace(/[^A-Za-z0-9À-ÿ\s]/g
+        , '');
+    return sanitizedValue;
+}
+
+/**
+ * Sanitize basic text
+ * @param inputString
+ */
+export const sanitizeBasic = (input: string): string => {
+    return input
+        .trim()
+        // Removes control and non-printable characters
+        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+        // Removes characters that could cause problems in JSON serialization
+        .replace(/[\u2028\u2029\uFEFF]/g, '')
+        // Removes potentially dangerous characters
+        .replace(/[<>]/g, '');
+};
+
+/**
+ * Sanitize long text fields
+ * @param inputString
+ */
+export const sanitizeRichText = (input: string): string => {
+    const sanitized = sanitizeBasic(input)
+        // Allows letters, numbers, common punctuation, and basic symbols
+        .replace(/[^\x20-\x7E\xA0-\xFF\s.,!?()[\]{}@#$%^&*+=_-]/g, '')
+        // Removes multiple space sequences
+        .replace(/\s+/g, ' ');
+
+    return sanitized.slice(0, 500); // Limita la lunghezza
+};
+
+
 
 /**
  * Checks if a passport ID is valid (contains only digits).
