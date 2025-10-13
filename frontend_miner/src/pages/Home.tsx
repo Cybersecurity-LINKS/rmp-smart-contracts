@@ -16,7 +16,7 @@ import {
     Textarea, Modal, ModalContent, ModalHeader, ModalBody, useDisclosure,
     ModalFooter,
 } from "@heroui/react";
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, FormEvent, ChangeEvent, Key} from 'react';
 import {Calendar, Copy} from 'lucide-react';
 import {CalendarDate, getLocalTimeZone, parseDate, today} from '@internationalized/date';
 
@@ -301,7 +301,7 @@ function HomePage() {
     };
 
     //Wrapper for input change
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
         console.log(name, value, typeof value);
         // Remove non-allowed chars
@@ -330,7 +330,7 @@ function HomePage() {
 
 
     // Wrapper to manage submit (Mint button)
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
 
@@ -388,7 +388,7 @@ function HomePage() {
         }
     };
 
-    const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleUnitChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const {value} = e.target;
         console.log(value);
         setFormValues(prev => ({
@@ -531,7 +531,7 @@ function HomePage() {
                                     variant="bordered"
                                     selectedKey={companies.find(c => c.label === formValues["08_company"])?.key ?? ''}
                                     defaultItems={companies}
-                                    onSelectionChange={(key: React.Key | null) => handleCompanyChange(key?.toString() ?? '')}
+                                    onSelectionChange={(key: Key | null) => handleCompanyChange(key?.toString() ?? '')}
                                 >
                                     {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
                                 </Autocomplete>
