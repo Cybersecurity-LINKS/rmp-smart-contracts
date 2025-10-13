@@ -129,9 +129,9 @@ function HomePage() {
                 dtAddress: address.dtAddress,
                 DTquantity: json['06_quantity'],
             };
-            // Create blob with JSON data
+            // Create a blob with JSON data
             const blob = new Blob([JSON.stringify(dataToDownload, null, 2)], {type: 'application/json'});
-            // Create an URL for blob
+            // Create a URL for blob
             const url = window.URL.createObjectURL(blob);
             // Create a temporary <a> element for the download
             const link = document.createElement('a');
@@ -151,7 +151,7 @@ function HomePage() {
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text)
             .then(() => {
-                // Optional: add a visual feedback here
+                // Optional: add visual feedback here
                 console.log('Text copied to clipboard!');
             })
             .catch((err) => {
@@ -159,7 +159,7 @@ function HomePage() {
             });
     };
 
-    // Ref for main container and feedback
+    // Ref for the main container and feedback
     const containerRef = useRef<HTMLDivElement>(null);
     const feedbackRef = useRef<HTMLDivElement>(null);
 
