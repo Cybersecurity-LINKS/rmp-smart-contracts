@@ -19,6 +19,7 @@ import {
 import {useState, useEffect, useRef, FormEvent, ChangeEvent, Key} from 'react';
 import {Calendar, Copy} from 'lucide-react';
 import {CalendarDate, getLocalTimeZone, parseDate, today} from '@internationalized/date';
+import addressesJson from '../scripts/contractAddresses.json'
 
 import {mintNFT} from "../scripts/deploy_nft.ts";
 
@@ -94,30 +95,72 @@ function HomePage() {
     const [address, setAddress] = useState<AddressInfo | null>(null);
     const [jsonString, setJsonString] = useState<string>('');
 
+
+    function getNiceErrorMessage(err: unknown): string {
+        // Ethers v6 and MetaMask use different messages/codes; make it similar
+        //if (typeof err === 'string') return err;
+
+        if (err && typeof err === 'object') {
+            const anyErr = err as any;
+
+            const raw = String(anyErr?.message ?? anyErr);
+            // wrong network case
+            if (/missing revert data/i.test(raw) && /estimateGas/i.test(raw)) {
+                return addressesJson.network.id === '1076'
+                    ? `Wrong network. Please switch to ${addressesJson.network.name} (${addressesJson.network.id}) and try again.`
+                    : 'Transaction simulation failed during gas estimation. You may be connected to the wrong network.';
+            }
+
+            // some common cases:
+            if (typeof anyErr?.shortMessage === 'string') return anyErr.shortMessage; // Ethers v6
+            if (typeof anyErr?.reason === 'string') return anyErr.reason;             // Revert reason
+            if (typeof anyErr?.error?.message === 'string') return anyErr.error.message;
+
+            // the user rejects
+            if (
+                anyErr?.code === 4001 ||                                   // MetaMask
+                anyErr?.code === 'ACTION_REJECTED' ||                       // Ethers v6
+                /user rejected/i.test(String(anyErr?.message || ''))
+            ) {
+                return 'Request rejected by user.';
+            }
+
+            if (typeof anyErr?.message === 'string') return anyErr.message;
+
+            // Fallback
+            if (typeof anyErr?.message === 'string') return anyErr.message;
+    }
+
+
+    try {
+            return JSON.stringify(err);
+        } catch {
+            return 'Unexpected error occurred.';
+        }
+    }
+
+
     async function createJSONfile(
         param: Partial<CreateJSONParam>,
         setFeedback: (feedback: FeedbackState) => void
     ) {
-        let jsonString = "";
         try {
-            setFeedback({type: 'loading', message: ' Minting... 🪨⛏️', visible: true})
-            jsonString = JSON.stringify(param, null, 2);
-            //console.log(jsonString)
-            setJsonString(jsonString)
-        } catch (e) {
-            console.log(e);
+            setFeedback({ type: 'loading', message: ' Minting... 🪨⛏️', visible: true });
+            const jsonString = JSON.stringify(param, null, 2);
+            setJsonString(jsonString);
+
+            const addrs = await mintNFT(jsonString);
+            console.log("Mint END");
+            console.log(addrs);
+            setAddress(addrs);
+
+            setFeedback({ type: 'success', message: 'Created ✅', visible: true });
+            onOpen();
+        } catch (err) {
+            console.error(err);
+            const msg = getNiceErrorMessage(err);
+            setFeedback({ type: 'error', message: msg, visible: true });
         }
-
-        const addrs = await mintNFT(jsonString);
-
-        console.log("Mint END")
-        console.log(addrs)
-        setAddress(addrs)
-
-        setFeedback({type: 'success', message: 'Created ✅', visible: true});
-
-        onOpen()
-
     }
 
     const handleDownload = () => {
