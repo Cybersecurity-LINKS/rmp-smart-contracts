@@ -5,7 +5,7 @@ import {
     Button,
     Input,
     Form,
-    DateInput,
+    DatePicker,
     DateValue,
     Alert,
     Checkbox,
@@ -623,7 +623,7 @@ function HomePage() {
                             </div>
 
                             <div className="flex w-full gap-6">
-                                <DateInput
+                                <DatePicker
                                     isRequired
                                     label="Creation date"
                                     labelPlacement="outside"
@@ -635,7 +635,6 @@ function HomePage() {
                                     classNames={{
                                         input: "bg-white"
                                     }}
-                                    startContent={<Calendar className="text-default-500" size={20}/>}
                                 />
 
                                 <DateRangePicker
