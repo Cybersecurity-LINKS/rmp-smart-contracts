@@ -5,7 +5,7 @@ import {
     Button,
     Input,
     Form,
-    DateInput,
+    DatePicker,
     DateValue,
     Alert,
     Checkbox,
@@ -19,6 +19,7 @@ import {
 import {useState, useEffect, useRef, FormEvent, ChangeEvent, Key} from 'react';
 import {Calendar, Copy} from 'lucide-react';
 import {CalendarDate, getLocalTimeZone, parseDate, today} from '@internationalized/date';
+import addressesJson from '../scripts/contractAddresses.json'
 
 import {mintNFT} from "../scripts/deploy_nft.ts";
 
@@ -94,30 +95,99 @@ function HomePage() {
     const [address, setAddress] = useState<AddressInfo | null>(null);
     const [jsonString, setJsonString] = useState<string>('');
 
+
+    //Useful minimum types for web3/ethers errors
+    type Web3Error = Record<string, unknown> & {
+        message?: unknown;
+        code?: number | string;
+        shortMessage?: unknown;
+        reason?: unknown;
+        error?: { message?: unknown };
+    };
+
+
+    function isObjectRecord(value: unknown): value is Record<string, unknown> {
+        return typeof value === "object" && value !== null;
+    }
+
+    function pickString(...vals: unknown[]): string | undefined {
+        return vals.find((v): v is string => typeof v === "string");
+    }
+
+
+
+
+    function getNiceErrorMessage(
+        err: unknown,
+    ): string {
+        // if `throw`, keep the message
+        if (typeof err === "string") return err;
+
+        if (!isObjectRecord(err)) {
+            // It is not an object, try serializing or fall back to default
+            try {
+                return JSON.stringify(err);
+            } catch {
+                return "Unexpected error occurred.";
+            }
+        }
+
+        const e = err as Web3Error;
+
+        // `raw` is used for regex / robust text searches
+        const raw = String(pickString(e.message) ?? err);
+
+        // 1) User rejection (EIP-1193 / Ethers v6)
+        const code = e.code;
+        if (
+            code === 4001 ||                      // EIP-1193 user rejected
+            code === "ACTION_REJECTED" ||         // Ethers v6
+            /user rejected/i.test(raw)
+        ) {
+            return "Request rejected by user.";
+        }
+
+        // 2) “Wrong network”/estimateGas case (if the classic pair of messages appears)
+        if (/missing revert data/i.test(raw) && /estimateGas/i.test(raw)) {
+            return `Transaction failed. Be sure to connect to ${addressesJson.network.name} with id ${addressesJson.network.id}`;
+        }
+
+        // 3) Select the first string available from among the most informative ones.
+        const selected =
+            pickString(
+                e.shortMessage,       // Ethers v6
+                e.reason,             // Revert reason
+                e.error?.message,     // Some libs nest here
+                e.message             // Base message
+            ) ?? raw;               // Fallback to raw
+
+        // 4) Last safe fallback
+        return selected || "Unexpected error occurred.";
+    }
+
+
+
     async function createJSONfile(
         param: Partial<CreateJSONParam>,
         setFeedback: (feedback: FeedbackState) => void
     ) {
-        let jsonString = "";
         try {
-            setFeedback({type: 'loading', message: ' Minting... 🪨⛏️', visible: true})
-            jsonString = JSON.stringify(param, null, 2);
-            //console.log(jsonString)
-            setJsonString(jsonString)
-        } catch (e) {
-            console.log(e);
+            setFeedback({ type: 'loading', message: ' Minting... 🪨⛏️', visible: true });
+            const jsonString = JSON.stringify(param, null, 2);
+            setJsonString(jsonString);
+
+            const addrs = await mintNFT(jsonString);
+            console.log("Mint END");
+            console.log(addrs);
+            setAddress(addrs);
+
+            setFeedback({ type: 'success', message: 'Created ✅', visible: true });
+            onOpen();
+        } catch (err) {
+            console.error(err);
+            const msg = getNiceErrorMessage(err);
+            setFeedback({ type: 'error', message: msg, visible: true });
         }
-
-        const addrs = await mintNFT(jsonString);
-
-        console.log("Mint END")
-        console.log(addrs)
-        setAddress(addrs)
-
-        setFeedback({type: 'success', message: 'Created ✅', visible: true});
-
-        onOpen()
-
     }
 
     const handleDownload = () => {
@@ -553,7 +623,7 @@ function HomePage() {
                             </div>
 
                             <div className="flex w-full gap-6">
-                                <DateInput
+                                <DatePicker
                                     isRequired
                                     label="Creation date"
                                     labelPlacement="outside"
@@ -565,7 +635,6 @@ function HomePage() {
                                     classNames={{
                                         input: "bg-white"
                                     }}
-                                    startContent={<Calendar className="text-default-500" size={20}/>}
                                 />
 
                                 <DateRangePicker

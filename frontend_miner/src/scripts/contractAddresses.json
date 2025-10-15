@@ -4,5 +4,9 @@
     "ERC721Base": "0xd062F1b8378A1451c81892805d4F72bD81eD1B63",
     "ERC20Base": "0x5DcAdCcE0E9e0B091D424A8D43d509ea94a47ab7",
     "ERC721Factory": "0x24F1B412f5b13Ee38C2B4f14Dd504c11B4F03533"
+  },
+  "network":{
+    "id": "1076",
+    "name": "IOTA EVM Testnet"
   }
 }
