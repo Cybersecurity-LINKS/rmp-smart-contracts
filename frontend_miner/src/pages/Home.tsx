@@ -96,48 +96,75 @@ function HomePage() {
     const [jsonString, setJsonString] = useState<string>('');
 
 
-    function getNiceErrorMessage(err: unknown): string {
-        // Ethers v6 and MetaMask use different messages/codes; make it similar
-        //if (typeof err === 'string') return err;
+    //Useful minimum types for web3/ethers errors
+    type Web3Error = Record<string, unknown> & {
+        message?: unknown;
+        code?: number | string;
+        shortMessage?: unknown;
+        reason?: unknown;
+        error?: { message?: unknown };
+    };
 
-        if (err && typeof err === 'object') {
-            const anyErr = err as any;
 
-            const raw = String(anyErr?.message ?? anyErr);
-            // wrong network case
-            if (/missing revert data/i.test(raw) && /estimateGas/i.test(raw)) {
-                return addressesJson.network.id === '1076'
-                    ? `Wrong network. Please switch to ${addressesJson.network.name} (${addressesJson.network.id}) and try again.`
-                    : 'Transaction simulation failed during gas estimation. You may be connected to the wrong network.';
-            }
+    function isObjectRecord(value: unknown): value is Record<string, unknown> {
+        return typeof value === "object" && value !== null;
+    }
 
-            // some common cases:
-            if (typeof anyErr?.shortMessage === 'string') return anyErr.shortMessage; // Ethers v6
-            if (typeof anyErr?.reason === 'string') return anyErr.reason;             // Revert reason
-            if (typeof anyErr?.error?.message === 'string') return anyErr.error.message;
-
-            // the user rejects
-            if (
-                anyErr?.code === 4001 ||                                   // MetaMask
-                anyErr?.code === 'ACTION_REJECTED' ||                       // Ethers v6
-                /user rejected/i.test(String(anyErr?.message || ''))
-            ) {
-                return 'Request rejected by user.';
-            }
-
-            if (typeof anyErr?.message === 'string') return anyErr.message;
-
-            // Fallback
-            if (typeof anyErr?.message === 'string') return anyErr.message;
+    function pickString(...vals: unknown[]): string | undefined {
+        return vals.find((v): v is string => typeof v === "string");
     }
 
 
-    try {
-            return JSON.stringify(err);
-        } catch {
-            return 'Unexpected error occurred.';
+
+
+    function getNiceErrorMessage(
+        err: unknown,
+    ): string {
+        // if `throw`, keep the message
+        if (typeof err === "string") return err;
+
+        if (!isObjectRecord(err)) {
+            // It is not an object, try serializing or fall back to default
+            try {
+                return JSON.stringify(err);
+            } catch {
+                return "Unexpected error occurred.";
+            }
         }
+
+        const e = err as Web3Error;
+
+        // `raw` is used for regex / robust text searches
+        const raw = String(pickString(e.message) ?? err);
+
+        // 1) User rejection (EIP-1193 / Ethers v6)
+        const code = e.code;
+        if (
+            code === 4001 ||                      // EIP-1193 user rejected
+            code === "ACTION_REJECTED" ||         // Ethers v6
+            /user rejected/i.test(raw)
+        ) {
+            return "Request rejected by user.";
+        }
+
+        // 2) “Wrong network”/estimateGas case (if the classic pair of messages appears)
+        if (/missing revert data/i.test(raw) && /estimateGas/i.test(raw)) {
+            return `Transaction failed. Be sure to connect to ${addressesJson.network.name} with id ${addressesJson.network.id}`;
+        }
+
+        // 3) Select the first string available from among the most informative ones.
+        const selected =
+            pickString(
+                e.shortMessage,       // Ethers v6
+                e.reason,             // Revert reason
+                e.error?.message,     // Some libs nest here
+                e.message             // Base message
+            ) ?? raw;               // Fallback to raw
+
+        // 4) Last safe fallback
+        return selected || "Unexpected error occurred.";
     }
+
 
 
     async function createJSONfile(
