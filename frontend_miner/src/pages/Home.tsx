@@ -583,7 +583,7 @@ function HomePage() {
                                 classNames={{
                                     input: "bg-white"
                                 }}
-                                maxLength={50}
+                                maxLength={10}
                             />
 
                             <div className="flex w-full gap-6">
@@ -618,7 +618,7 @@ function HomePage() {
                                     classNames={{
                                         input: "bg-white"
                                     }}
-                                    maxLength={50}
+                                    maxLength={10}
                                 />
                             </div>
 
@@ -681,7 +681,7 @@ function HomePage() {
                                     classNames={{
                                         input: "bg-white"
                                     }}
-                                    maxLength={50}
+                                    maxLength={10}
                                 />
                                 <Input
                                     //isRequired
@@ -695,7 +695,7 @@ function HomePage() {
                                     classNames={{
                                         input: "bg-white"
                                     }}
-                                    maxLength={50}
+                                    maxLength={10}
                                 />
 
                                 <Input
@@ -729,7 +729,7 @@ function HomePage() {
                                     classNames={{
                                         input: "bg-white"
                                     }}
-                                    maxLength={50}
+                                    maxLength={18}
                                 />
                             </div>
 
