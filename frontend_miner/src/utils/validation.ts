@@ -3,8 +3,8 @@
 /**
  * Sanitize the input by removing potentially dangerous characters
  */
-export const sanitizeInput = (input: string): string => {
-    return input
+export const sanitizeInput = (inputString: string): string => {
+    return inputString
         .trim()
         .replace(/[<>]/g, '')
         .replace(/[;'"\\]/g, '');
@@ -43,9 +43,7 @@ export function sanitizeQuantity(inputString: string) {
  */
 export function sanitizeID(inputString: string) {
     // Remove non-numeric characters except comma
-    const numericString = inputString.replace(/[^0-9]/g, '');
-
-    return numericString;
+    return inputString.replace(/[^0-9]/g, '');
 }
 
 /**
@@ -53,8 +51,7 @@ export function sanitizeID(inputString: string) {
  * @param inputString
  */
 export function sanitizeOnlyLetters(inputString: string) {
-    const sanitizedValue = inputString.replace(/[^A-Za-zÀ-ÿ\s'-]/g, '');
-    return sanitizedValue;
+    return inputString.replace(/[^A-Za-zÀ-ÿ\s'-]/g, '');
 }
 
 /**
@@ -62,22 +59,18 @@ export function sanitizeOnlyLetters(inputString: string) {
  * @param inputString
  */
 export function sanitizeOnlyLettersAndNumbers(inputString: string) {
-    const sanitizedValue = inputString.replace(/[^A-Za-z0-9À-ÿ\s]/g
-        , '');
-    return sanitizedValue;
+    return inputString.replace(/[^A-Za-z0-9À-ÿ\s]/g, '');
 }
 
 /**
  * Sanitize basic text
  * @param inputString
  */
-export const sanitizeBasic = (input: string): string => {
-    return input
+export const sanitizeBasic = (inputString: string): string => {
+    return inputString
         .trim()
         // Removes control and non-printable characters
         .replace(/[\p{Cc}\u2028\u2029\uFEFF]/gu, '')
-        // Removes characters that could cause problems in JSON serialization
-        .replace(/[\u2028\u2029\uFEFF]/g, '')
         // Removes potentially dangerous characters
         .replace(/[<>]/g, '');
 };
@@ -86,14 +79,14 @@ export const sanitizeBasic = (input: string): string => {
  * Sanitize long text fields
  * @param inputString
  */
-export const sanitizeRichText = (input: string): string => {
-    const sanitized = sanitizeBasic(input)
+export const sanitizeRichText = (inputString: string): string => {
+    const sanitized = inputString
         // Allows letters, numbers, common punctuation, and basic symbols
         .replace(/[^\x20-\x7E\xA0-\xFF\s.,!?()[\]{}@#$%^&*+=_-]/g, '')
         // Removes multiple space sequences
         .replace(/\s+/g, ' ');
 
-    return sanitized.slice(0, 500); // Limita la lunghezza
+    return sanitized.slice(0, 500);
 };
 
 
