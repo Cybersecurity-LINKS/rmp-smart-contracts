@@ -57,12 +57,12 @@ const mintNFT = async () => {
     //console.log(nftTxn)
     await nftTxn.wait()
    // console.log(rc)
-    console.log(`NFT Minted! Check it out at: https://explorer.evm.testnet.iotaledger.net/tx/${nftTxn.hash}`)
+    console.log(`NFT Minted! Check it out at: ${process.env.EXPLORER_URL}/tx/${nftTxn.hash}`)
     
 
 
     let nftTxn1 = await myNftContract.getAllDTCreatedAddress()
-    console.log(`Data Token address: https://explorer.evm.testnet.iotaledger.net/token/${nftTxn1[nftTxn1.length - 1]}`)
+    console.log(`Data Token address: ${process.env.EXPLORER_URL}/token/${nftTxn1[nftTxn1.length - 1]}`)
 
     // Write the address, and metadata of the newly minted NFT to a file
     let obtainedDT = {}

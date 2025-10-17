@@ -18,8 +18,6 @@ const fs =require("fs") ;
 
 
 //currentTime =  performance.now();
-const addresses = JSON.parse(fs.readFileSync(process.env.ADDRESS_FILE)).addresses;
-
 
 const provider = new ethers.getDefaultProvider(process.env.NETWORK_URL);
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY_ACCOUNT2, provider);
@@ -61,7 +59,7 @@ const fetchNFT = async () => {
     console.log(`Token balance: ${ethers.formatEther(balance)}`)
     console.log(`Get NFT address`)
     let nftTxn = await myNftContract.getERC721()
-    console.log(`NFT address! Check it out at: https://explorer.evm.testnet.iotaledger.net/address/${nftTxn}`)
+    console.log(`NFT address! Check it out at: ${process.env.EXPLORER_URL}/address/${nftTxn}`)
     console.log(`Get the Passport`)
     const myNftContract1 = new ethers.Contract(nftTxn, abi1, signer)
     let nftTxn1 = await myNftContract1.tokenURI(1)

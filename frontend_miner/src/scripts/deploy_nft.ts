@@ -44,6 +44,17 @@ const addresses = addressesJson.addresses;
 export const mintNFT = async (passportJSONstring: string) => {
     //currentTime =  performance.now();
 
+    if (!window.ethereum) {
+        throw new Error("No EIP-1193 provider found. Please install MetaMask.");
+    }
+
+
+    const current = await window.ethereum.request?.({ method: "eth_accounts" });
+    if (!current || current.length === 0) {
+        await window.ethereum.request?.({ method: "eth_requestAccounts" });
+    }
+
+
     const provider = new ethers.BrowserProvider(window.ethereum)
     const signer = await provider.getSigner()
 

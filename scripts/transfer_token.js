@@ -56,7 +56,7 @@ const sendToken = async () => {
     let nftTxn1 = await myNftContract.transfer(toAddress, amount)
     await nftTxn1.wait()
     
-    console.log(`Token transfer successfull! Check it out at: https://explorer.evm.testnet.iotaledger.net/tx/${nftTxn1.hash}`)
+    console.log(`Token transfer successfull! Check it out at: ${process.env.EXPLORER_URL}/tx/${nftTxn1.hash}`)
  
 
 }
