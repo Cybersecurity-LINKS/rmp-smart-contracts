@@ -267,6 +267,12 @@ function HomePage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure();
 
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+    const markBlur = (name: string) => {
+        setTouched(prev => ({ ...prev, [name]: true }));
+    };
+
     // Control value to lock/unlock Mint button
     const isFormValid = (): boolean => {
         //const sanitizedPassportId = sanitizeInput(formValues.passportId);
@@ -455,6 +461,7 @@ function HomePage() {
             console.error('Error requesting credential:', error);
         } finally {
             setIsSubmitting(false);
+            setTouched({});
         }
     };
 
@@ -573,10 +580,12 @@ function HomePage() {
                         >
                             <Input
                                 isRequired
+                                onBlur={ () => markBlur("01_passportId") }
+                                isInvalid={ touched["01_passportId"] && formValues["01_passportId"].length === 0 }
                                 label="Passport Id"
                                 labelPlacement="outside"
                                 name="01_passportId"
-                                placeholder="Enter the passport id"
+                                placeholder="Enter the passport id, numbers only"
                                 value={formValues["01_passportId"]}
                                 onChange={handleInputChange}
                                 variant="bordered"
@@ -589,6 +598,8 @@ function HomePage() {
                             <div className="flex w-full gap-6">
                                 <Autocomplete
                                     isRequired
+                                    onBlur={ () => markBlur("08_company") }
+                                    isInvalid={ touched["08_company"] && formValues["08_company"].length === 0 }
                                     //isVirtualized
                                     labelPlacement="outside"
                                     label="Company"
@@ -608,6 +619,8 @@ function HomePage() {
 
                                 <Input
                                     isRequired
+                                    onBlur={ () => markBlur("09_mine") }
+                                    isInvalid={ touched["09_mine"] && formValues["09_mine"].length === 0 }
                                     label="Mine"
                                     labelPlacement="outside"
                                     name="09_mine"
@@ -624,7 +637,10 @@ function HomePage() {
 
                             <div className="flex w-full gap-6">
                                 <DatePicker
+                                    showMonthAndYearPickers
                                     isRequired
+                                    onBlur={ () => markBlur("02_creationDate") }
+                                    isInvalid={ touched["02_creationDate"] && formValues["02_creationDate"].length === 0 }
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
@@ -671,6 +687,8 @@ function HomePage() {
                             <div className="flex w-full gap-6">
                                 <Input
                                     isRequired
+                                    onBlur={ () => markBlur("03_typeOfMaterial") }
+                                    isInvalid={ touched["03_typeOfMaterial"] && formValues["03_typeOfMaterial"].length === 0 }
                                     label="Type of material"
                                     labelPlacement="outside"
                                     name="03_typeOfMaterial"
@@ -718,6 +736,8 @@ function HomePage() {
                                         </div>
                                     }
                                     isRequired
+                                    onBlur={ () => markBlur("06_quantity") }
+                                    isInvalid={ touched["06_quantity"] && formValues["06_quantity"].length === 0 }
                                     //type="number"
                                     label="Quantity"
                                     labelPlacement="outside"
