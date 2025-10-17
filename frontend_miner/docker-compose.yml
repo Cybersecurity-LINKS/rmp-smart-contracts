@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  frontend:
+  miner-rs:
     build:
       context: ..
       dockerfile: frontend_miner/Dockerfile
@@ -14,5 +14,4 @@ services:
 
 networks:
   miner-net:
-    external: true
     name: shared-net
