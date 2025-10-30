@@ -56,9 +56,9 @@ const Footer = () => {
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="mb-4 md:mb-0">
-                        <span className="font-medium text-primary-500">NFT Minter</span>
+                        <span className="font-medium text-primary-500">RMP Minter</span>
                         <span className="mx-2 text-default-400">|</span>
-                        <span className="text-sm text-default-500">Create your materials' NFT</span>
+                        <span className="text-sm text-default-500">Create your materials' NFT and DT</span>
                     </div>
                     <div className="text-sm text-default-500">
             <span>
