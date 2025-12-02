@@ -566,8 +566,8 @@ function HomePage() {
                                         )}
 
                                         <div className="flex items-center justify-center w-full">
-                                            <Alert color={"danger"}
-                                                   description={"Downloading the file let's you avoid to lose the addresses of the minted items"}
+                                            <Alert color={"warning"}
+                                                   description={"Downloading the file is recommended to easily access the addresses of the minted items"}
                                                    title={"NOTE"}/>
                                         </div>
                                     </ModalBody>
