@@ -744,6 +744,7 @@ function HomePage() {
                                                 defaultValue="kg"
                                             >
                                                 <option>kg</option>
+                                                <option>ton</option>
                                                 <option>lb</option>
                                                 <option>oz</option>
                                             </select>
