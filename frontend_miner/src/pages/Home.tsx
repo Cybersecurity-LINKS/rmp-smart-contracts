@@ -323,14 +323,14 @@ function HomePage() {
     const [formValues, setFormValues] = useState({
         '01_passportId': '789273311',
         '02_creationDate': maxDate.toString(),
-        '03_typeOfMaterial': 'Platinum',
-        '04_quality': 'Raw',
-        '05_productionPeriod': '2024-03-01 - 2024-03-31',
-        '06_quantity': '224',
-        '07_unit': 'kg',
-        '08_company': companies[0].label,
-        '09_mine': 'LINKS Mine',
-        '10_info': 'Ore Mined 1248 tons, Platinum Content 6.47 g/t, Downtime 0.64 hours, Labor Availability 94.07%, Recovery Rate 86.63%, Waste Rock 316.41 tons',
+        '03_typeOfMaterial': 'MAGNESITE',
+        '04_quality': 'ENRICHED',
+        '05_productionPeriod': '2024-01-01 - 2024-12-31',
+        '06_quantity': '69259',
+        '07_unit': 'ton',
+        '08_company': companies[4].label,
+        '09_mine': 'KAKAVOS',
+        '10_info': 'Working days of benefication, Recovery Rate 20.4%, Waste Rock 270.3tons',
         '11_note': 'SAMPLE data (not real production data), for TEST purposes only',
         disclaimerAccepted: false
     });
@@ -741,7 +741,7 @@ function HomePage() {
                                                 id="unit"
                                                 name="07_unit"
                                                 onChange={handleUnitChange}
-                                                defaultValue="kg"
+                                                defaultValue="ton"
                                             >
                                                 <option>kg</option>
                                                 <option>ton</option>
