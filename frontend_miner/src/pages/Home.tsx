@@ -330,7 +330,7 @@ function HomePage() {
         '07_unit': 'ton',
         '08_company': companies[4].label,
         '09_mine': 'KAKAVOS',
-        '10_info': 'Working days of benefication, Recovery Rate 20.4%, Waste Rock 270.3tons',
+        '10_info': 'Working days of beneficiation 259 days, Recovery Rate 20.4%, Waste Rock 270.3tons',
         '11_note': 'SAMPLE data (not real production data), for TEST purposes only',
         disclaimerAccepted: false
     });
