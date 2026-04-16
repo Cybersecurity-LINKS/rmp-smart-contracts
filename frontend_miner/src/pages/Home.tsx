@@ -658,7 +658,7 @@ function HomePage() {
                                     label="Creation date"
                                     labelPlacement="outside"
                                     onChange={handleDateChange}
-                                    value={formValues["02_creationDate"] ? parseDate(formValues["02_creationDate"]) : null}
+                                    value={formValues["02_creationDate"] ? parseDate(formValues["02_creationDate"]) : null as any}
                                     minValue={minDate}
                                     maxValue={maxDate}
                                     variant="bordered"
@@ -684,7 +684,7 @@ function HomePage() {
                                                     end:   parseDate(endStr.trim()),
                                                 };
                                             })()
-                                            : null
+                                            : null as any
                                     }
 
                                     onChange={handleDateRangeChange}
