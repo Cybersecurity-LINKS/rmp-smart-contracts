@@ -11,6 +11,7 @@ services:
       - BACKEND_URL=http://miner-rs:3213
     networks:
       - miner-net
+    restart: unless-stopped
 
 networks:
   miner-net:
