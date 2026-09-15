@@ -71,7 +71,7 @@ module.exports = {
             accounts: [process.env.PRIVATE_KEY]
         },
         'links': {
-            url: 'https://json-rpc.evm.stardust.linksfoundation.com/dtcb-chain',
+            url: 'https://json-rpc.evm.stardust.linksfoundation.com/links-chain',
             chainId: 1074,
             gas: 2100000,
             gasPrice: 10_000_000_000,
