@@ -58,6 +58,12 @@ type FeedbackState = {
 
 const companies = [
     {key: "1", label: "LINKS Foundation"},
+    {key: "2", label: "Los Frailes"},
+    {key: "3", label: "TERNA MAG"},
+    {key: "4", label: "Tapojarvi"},
+    {key: "5", label: "JSW SA"},
+    {key: "6", label: "Tharsis Mining"},
+    {key: "7", label: "DIGIMINE"},
     //{ key: "2", label: " ITAINNOVA" },
     //{ key: "3", label: "CORE Innovation Centre" },
     //{ key: "4", label: "Institute of Communication and Computer Systems" },
@@ -66,7 +72,6 @@ const companies = [
     //{ key: "7", label: "University of Thrace" },
     //{ key: "8", label: "Tampere University" },
     //{ key: "9", label: "Aristotle University of Thessaloniki" },
-    {key: "10", label: "Wits Mining Institute"},
     //{ key: "11", label: "SUBTERRA" },
     //{ key: "12", label: "AuroraGeo Consulting" },
     //{ key: "13", label: "LIBRA AI Technologies" },
@@ -74,11 +79,7 @@ const companies = [
     //{ key: "15", label: "Terradue" },
     //{ key: "16", label: "DARES" },
     //{ key: "17", label: "DigitalTwin Technology GmbH" },
-    {key: "18", label: "Tapojarvi"},
-    {key: "19", label: "Tharsis Mining"},
-    {key: "20", label: "TERNA MAG"},
-    {key: "21", label: "JSW SA"},
-    {key: "22", label: "Eticas"},
+    //{key: "22", label: "Eticas"},
 ];
 
 function HomePage() {
@@ -328,7 +329,7 @@ function HomePage() {
         '05_productionPeriod': '2024-01-01 - 2024-12-31',
         '06_quantity': '69259',
         '07_unit': 'ton',
-        '08_company': companies[4].label,
+        '08_company': companies[2].label,
         '09_mine': 'KAKAVOS',
         '10_info': 'Working days of beneficiation 259 days, Recovery Rate 20.4%, Waste Rock 270.3tons',
         '11_note': 'SAMPLE data (not real production data), for TEST purposes only',
